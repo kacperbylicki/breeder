@@ -14,8 +14,8 @@ backend/yarn-debug.log*
 backend/yarn-error.log*
 backend/lerna-debug.log*
 
-# local env files
-backend/.env*.local
+# env files
+backend/.env
 
 # OS
 backend/.DS_Store
@@ -65,7 +65,7 @@ frontend/yarn-error.log*
 frontend/.pnpm-debug.log*
 
 # local env files
-frontend/.env*.local
+frontend/.env
 
 # vercel
 frontend/.vercel
