@@ -4,7 +4,7 @@ import { plainToClass } from "class-transformer";
 
 export class EnvironmentVariables {
   @IsEnum(EnvironmentEnum)
-  ENVIRONMENT!: string;
+  NODE_ENV!: string;
 
   @IsPositive()
   @IsNotEmpty()
@@ -20,11 +20,19 @@ export class EnvironmentVariables {
 
   @IsString()
   @IsNotEmpty()
+  ACCESS_TOKEN_ALGORITHM!: string;
+
+  @IsString()
+  @IsNotEmpty()
   REFRESH_TOKEN_SECRET!: string;
 
   @IsPositive()
   @IsNotEmpty()
   REFRESH_TOKEN_TTL!: number;
+
+  @IsString()
+  @IsNotEmpty()
+  REFRESH_TOKEN_ALGORITHM!: string;
 
   @IsPositive()
   @IsNotEmpty()
@@ -32,7 +40,27 @@ export class EnvironmentVariables {
 
   @IsString()
   @IsNotEmpty()
-  DB_URI!: string;
+  POSTGRES_HOST!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  POSTGRES_DB!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  POSTGRES_USER!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  POSTGRES_PASSWORD!: string;
+
+  @IsPositive()
+  @IsNotEmpty()
+  POSTGRES_PORT!: number;
+
+  @IsString()
+  @IsNotEmpty()
+  S3_IMAGES_BUCKET!: string;
 }
 
 export function validate(config: Record<string, unknown>) {

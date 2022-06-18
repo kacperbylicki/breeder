@@ -1,6 +1,6 @@
 import { AppConfigService } from "../../config";
 import { DynamicModule, Module } from "@nestjs/common";
-import { MongooseModule } from "@nestjs/mongoose";
+import { TypeOrmModule } from "@nestjs/typeorm";
 
 @Module({})
 export class DatabaseModule {
@@ -8,14 +8,21 @@ export class DatabaseModule {
     return {
       module: this,
       imports: [
-        MongooseModule.forRootAsync({
+        TypeOrmModule.forRootAsync({
           inject: [AppConfigService],
           useFactory: (configService: AppConfigService) => ({
-            uri: configService.getDatabaseUri(),
+            type: "postgres",
+            host: configService.getDatabaseHost(),
+            port: configService.getDatabasePort(),
+            username: configService.getDatabaseUser(),
+            password: configService.getDatabasePassword(),
+            database: configService.getDatabase(),
+            entities: [`${__dirname}/../**/*.entity.{js,ts}`],
+            synchronize: true,
           }),
         }),
       ],
-      exports: [MongooseModule],
+      exports: [TypeOrmModule],
     };
   }
 }

@@ -1,6 +1,6 @@
 import omit from "lodash.omit";
 import { AccountService } from "../service/account.service";
-import { ConfigService } from "@nestjs/config";
+import { AppConfigService } from "../../../../config";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtPayload } from "jsonwebtoken";
@@ -10,13 +10,13 @@ import { PasswordlessAccount } from "../../domain/type/passwordless-account.type
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy, "jwt") {
   constructor(
-    protected readonly configService: ConfigService,
+    protected readonly configService: AppConfigService,
     private readonly accountService: AccountService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.get("accessToken.secret"),
+      secretOrKey: configService.getAccessTokenSettings("secret"),
     });
   }
 

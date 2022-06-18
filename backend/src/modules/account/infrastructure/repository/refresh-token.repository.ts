@@ -1,42 +1,31 @@
+import { EntityRepository, Repository } from "typeorm";
 import { IRefreshTokenRepository } from "../../domain/repository/refresh-token.repository";
-import { InjectModel } from "@nestjs/mongoose";
 import { RefreshToken } from "../../domain/entity/refresh-token.entity";
 import { RefreshTokenMapper } from "../../application/mapper/refresh-token.mapper";
-import { RefreshToken as RefreshTokenModel } from "../entity/refresh-token.model";
+import { RefreshTokenOrmEntity } from "../entity/refresh-token.entity";
 
-export class RefreshTokenRepository implements IRefreshTokenRepository {
-  constructor(
-    @InjectModel(RefreshTokenModel.name) private readonly refreshTokenModel: RefreshTokenModel,
-  ) {}
-
-  async get(email: string): Promise<RefreshToken | null> {
-    const persistedRefreshToken = await this.refreshTokenModel.findOne({ email });
+@EntityRepository(RefreshTokenOrmEntity)
+export class RefreshTokenRepository
+  extends Repository<RefreshTokenOrmEntity>
+  implements IRefreshTokenRepository
+{
+  async findOneByEmail(email: string): Promise<RefreshToken | null> {
+    const persistedRefreshToken = await this.findOne({ email });
 
     return persistedRefreshToken ? RefreshTokenMapper.toDomain(persistedRefreshToken) : null;
   }
 
-  async upsert(refreshToken: RefreshToken): Promise<RefreshToken> {
+  async upsertAndReturn(refreshToken: RefreshToken): Promise<RefreshToken> {
     const persistenceRefreshToken = RefreshTokenMapper.toPersistence(refreshToken);
 
-    const filter = {
-      email: persistenceRefreshToken.email,
-    };
+    const params = ["email"];
 
-    const params = {
-      new: true,
-      upsert: true,
-    };
-
-    const upsertedRefreshToken = await this.refreshTokenModel.findOneAndUpdate(
-      filter,
-      persistenceRefreshToken,
-      params,
-    );
+    const upsertedRefreshToken = await this.upsert(persistenceRefreshToken, params);
 
     return RefreshTokenMapper.toDomain(upsertedRefreshToken);
   }
 
-  async delete(email: string): Promise<void> {
-    await this.refreshTokenModel.deleteOne({ email });
+  async deleteOne(email: string): Promise<void> {
+    await this.delete({ email });
   }
 }

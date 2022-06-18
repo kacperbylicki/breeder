@@ -1,36 +1,32 @@
 import { Entity } from "../../../common/domain/entity/base.entity";
-import { Gender } from "../enum/gender.enum";
+import { Profile } from "../../../profile";
 
 interface IAccount {
   uuid?: string;
   email: string;
-  username: string;
   password: string;
-  gender: Gender;
+  profile: Profile;
 }
 
 export class Account extends Entity {
   public email!: string;
-  public username!: string;
-  public password!: string;
-  public gender!: Gender;
+  public password: string;
+  public profile!: Profile;
 
   private constructor(props: IAccount, uuid?: string) {
     super(uuid);
 
     this.email = props.email;
-    this.username = props.username;
     this.password = props.password;
-    this.gender = props.gender;
+    this.profile = props.profile;
   }
 
   public static create(props: IAccount, uuid?: string) {
     return new Account(
       {
         email: props.email,
-        username: props.username,
         password: props.password,
-        gender: Gender[props.gender],
+        profile: props.profile ?? null,
       },
       uuid,
     );

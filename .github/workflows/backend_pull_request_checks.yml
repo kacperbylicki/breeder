@@ -1,0 +1,39 @@
+name: breeder-backend-pr-checks
+on:
+  pull_request:
+    branches: 
+      - master
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend_pull_request_checks.yml"
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+  
+      - name: Use Node.js ${{ matrix.node-version }} and install dependencies
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'yarn'
+          cache-dependency-path: backend/yarn.lock
+        
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+        working-directory: backend
+        
+      - name: Lint
+        run: yarn lint
+        working-directory: backend
+  
+      - name: Test
+        run: yarn test
+        working-directory: backend

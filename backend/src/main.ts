@@ -21,7 +21,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .addBearerAuth()
     .setTitle("Breeder")
-    .setDescription("Breeder - dogs dating app")
+    .setDescription("Breeder - breeders app")
     .setVersion("1.0")
     .build();
 

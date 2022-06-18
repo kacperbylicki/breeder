@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  breeder_postgres:
+    container_name: breeder-postgres
+    image: postgres:alpine
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+    volumes:
+      - breeder-postgres:/var/lib/postgresql/data
+    ports:
+      - ${POSTGRES_PORT:-5432}:${POSTGRES_PORT:-5432}
+    networks:
+      - webnet
+
+  breeder_api:
+    container_name: breeder-backend
+    build:
+      context: .
+      target: development
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    ports:
+      - ${SERVER_PORT:-3000}:${SERVER_PORT:-3000}
+      - ${DEBUGGER_PORT:-9229}:${DEBUGGER_PORT:-9229}
+    depends_on:
+      - breeder_postgres
+    networks:
+      - webnet
+
+volumes: 
+  breeder-postgres:
+
+networks:
+  webnet:

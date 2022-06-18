@@ -74,8 +74,10 @@ export class AccountController {
   @Post("register")
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ description: `Account created` })
-  async register(@Body() registerDTO: RegisterDTO): Promise<void> {
-    return this.accountService.register(registerDTO);
+  async register(@Body() registerDTO: RegisterDTO): Promise<PasswordlessAccount> {
+    const account = await this.accountService.register(registerDTO);
+
+    return omit(account, [`password`]);
   }
 
   @UseGuards(JwtAuthGuard)

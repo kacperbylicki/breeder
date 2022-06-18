@@ -22,6 +22,7 @@ export class AppConfigService extends ConfigService {
     const accessTokenSettings: AccessTokenSettings = {
       secret: this.get("ACCESS_TOKEN_SECRET"),
       ttl: this.get("ACCESS_TOKEN_TTL"),
+      algorithm: this.get("ACCESS_TOKEN_ALGORITHM"),
     };
 
     return param ? accessTokenSettings[param] : accessTokenSettings;
@@ -35,6 +36,7 @@ export class AppConfigService extends ConfigService {
     const refreshTokenSettings: RefreshTokenSettings = {
       secret: this.get("REFRESH_TOKEN_SECRET"),
       ttl: this.get("REFRESH_TOKEN_TTL"),
+      algorithm: this.get("REFRESH_TOKEN_ALGORITHM"),
     };
 
     return param ? refreshTokenSettings[param] : refreshTokenSettings;
@@ -45,15 +47,35 @@ export class AppConfigService extends ConfigService {
   }
 
   getEnvironment() {
-    return this.get("ENVIRONMENT");
+    return this.get("NODE_ENV");
   }
 
   getPasswordHashRounds(): number {
     return this.get("PASSWORD_BCRYPT_ROUNDS");
   }
 
-  getDatabaseUri(): string {
-    return this.get("DB_URI");
+  getDatabaseHost(): string {
+    return this.get("POSTGRES_HOST");
+  }
+
+  getDatabase(): string {
+    return this.get("POSTGRES_DB");
+  }
+
+  getDatabaseUser(): string {
+    return this.get("POSTGRES_USER");
+  }
+
+  getDatabasePassword(): string {
+    return this.get("POSTGRES_PASSWORD");
+  }
+
+  getDatabasePort(): number {
+    return this.get("POSTGRES_PORT");
+  }
+
+  getImagesBucket(): string {
+    return this.get("S3_IMAGES_BUCKET");
   }
 
   isDevelopment() {

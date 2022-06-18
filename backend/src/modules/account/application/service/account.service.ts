@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import { Account } from "../../domain/entity/account.entity";
 import { AccountMapper } from "../mapper/account.mapper";
 import { AccountRepository } from "../../infrastructure/repository/account.repository";
-import { ConfigService } from "@nestjs/config";
+import { AppConfigService } from "../../../../config";
 import {
   ConflictException,
   Injectable,
@@ -22,16 +22,17 @@ import { Tokens } from "../../domain/type/tokens.type";
 export class AccountService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
+    private readonly configService: AppConfigService,
     private readonly accountRepository: AccountRepository,
     private readonly refreshTokenRepository: RefreshTokenRepository,
   ) {}
 
   private async createTokensPair(account: PasswordlessAccount): Promise<Tokens> {
-    const accessTokenSecret = this.configService.get<string>("accessToken.secret");
-    const accessTokenTTL = this.configService.get<number>("accessToken.ttl");
-    const refreshTokenSecret = this.configService.get<string>("refreshToken.secret");
-    const refreshTokenTTL = this.configService.get<number>("refreshToken.ttl");
+    const { secret: accessTokenSecret, ttl: accessTokenTTL } =
+      this.configService.getAccessTokenSettings();
+
+    const { secret: refreshTokenSecret, ttl: refreshTokenTTL } =
+      this.configService.getRefreshTokenSettings();
 
     const accessToken = await this.jwtService.signAsync(account, {
       secret: accessTokenSecret,
@@ -49,9 +50,9 @@ export class AccountService {
     };
   }
 
-  private async getRefreshToken(email: string, token: string): Promise<RefreshToken> {
+  private async getPersistenceRefreshToken(email: string, token: string): Promise<RefreshToken> {
     const hashedRefreshToken = await bcrypt.hash(token, 10);
-    const refreshTokenTTL = this.configService.get("refreshToken.ttl");
+    const { ttl: refreshTokenTTL } = this.configService.getRefreshTokenSettings();
 
     const refreshToken = RefreshTokenMapper.toDomain({
       token: hashedRefreshToken,
@@ -63,7 +64,7 @@ export class AccountService {
   }
 
   async findByEmail(email: string): Promise<Account | null> {
-    const persistedAccount = await this.accountRepository.findByEmail(email);
+    const persistedAccount = await this.accountRepository.findOneByEmail(email);
 
     return persistedAccount ? AccountMapper.toDomain(persistedAccount) : null;
   }
@@ -72,9 +73,12 @@ export class AccountService {
     const { accessToken: accessTokenStr, refreshToken: refreshTokenStr } =
       await this.createTokensPair(account);
 
-    const refreshToken = await this.getRefreshToken(account.email, refreshTokenStr);
+    const persistenceRefreshToken = await this.getPersistenceRefreshToken(
+      account.email,
+      refreshTokenStr,
+    );
 
-    await this.refreshTokenRepository.upsert(refreshToken);
+    await this.refreshTokenRepository.upsertAndReturn(persistenceRefreshToken);
 
     return {
       accessToken: accessTokenStr,
@@ -83,7 +87,9 @@ export class AccountService {
   }
 
   async authenticateWithRefreshToken(account: PasswordlessAccount, token: string): Promise<Tokens> {
-    const persistedRefreshTokenData = await this.refreshTokenRepository.get(account.email);
+    const persistedRefreshTokenData = await this.refreshTokenRepository.findOneByEmail(
+      account.email,
+    );
 
     if (!persistedRefreshTokenData) {
       throw new UnauthorizedException();
@@ -98,9 +104,9 @@ export class AccountService {
     const { accessToken: accessTokenStr, refreshToken: refreshTokenStr } =
       await this.createTokensPair(account);
 
-    const refreshToken = await this.getRefreshToken(account.email, refreshTokenStr);
+    const refreshToken = await this.getPersistenceRefreshToken(account.email, refreshTokenStr);
 
-    await this.refreshTokenRepository.upsert(refreshToken);
+    await this.refreshTokenRepository.upsertAndReturn(refreshToken);
 
     return {
       accessToken: accessTokenStr,
@@ -108,7 +114,7 @@ export class AccountService {
     };
   }
 
-  async register(data: RegisterDTO): Promise<void> {
+  async register(data: RegisterDTO): Promise<Account> {
     const accountExists = await this.accountRepository.exists(data.email);
 
     if (accountExists) {
@@ -122,10 +128,10 @@ export class AccountService {
     const hashedPassword = await bcrypt.hash(data.password, 10);
     const account = AccountMapper.toDomain({ ...data, password: hashedPassword });
 
-    await this.accountRepository.save(account);
+    return this.accountRepository.saveAndReturn(account);
   }
 
   async logout(account: PasswordlessAccount): Promise<void> {
-    await this.refreshTokenRepository.delete(account.email);
+    await this.refreshTokenRepository.deleteOne(account.email);
   }
 }
