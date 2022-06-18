@@ -6,7 +6,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 
 @Module({
   imports: [TypeOrmModule.forFeature([MatchRepository])],
+  providers: [CreateMatchService, GetAllMatchesService],
   exports: [CreateMatchService, GetAllMatchesService, TypeOrmModule],
-  providers: [CreateMatchService, GetAllMatchesService, MatchRepository],
 })
 export class MatchModule {}

@@ -9,4 +9,3 @@ export * from "./application/service/get-breed.service";
 export * from "./application/service/upload-image.service";
 export * from "./application/controller/breed.controller";
 export * from "./application/controller/profile.controller";
-export * from "./application/mapper/profile.mapper";

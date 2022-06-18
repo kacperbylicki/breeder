@@ -12,7 +12,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
     TypeOrmModule.forFeature([ProfileRepository]),
   ],
   controllers: [BoardController],
-  exports: [GetBoardService, TypeOrmModule],
   providers: [GetBoardService],
+  exports: [GetBoardService, TypeOrmModule],
 })
 export class BoardModule {}

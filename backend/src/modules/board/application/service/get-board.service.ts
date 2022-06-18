@@ -1,8 +1,10 @@
 import { BaseService } from "../../../common";
+import { Injectable } from "@nestjs/common";
 import { MatchRepository } from "../../../match";
 import { Profile, ProfileRepository } from "../../../profile";
 import { ReactionRepository } from "../../../reaction";
 
+@Injectable()
 export class GetBoardService implements BaseService<string, Profile[]> {
   constructor(
     private readonly profileRepository: ProfileRepository,

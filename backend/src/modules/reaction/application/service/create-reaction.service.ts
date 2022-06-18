@@ -1,5 +1,5 @@
 import { BaseService } from "../../../common";
-import { ConflictException } from "@nestjs/common";
+import { ConflictException, Injectable } from "@nestjs/common";
 import { CreateMatchService, Match, MatchMapper, MatchRepository } from "../../../match";
 import { CreateReactionDTO } from "../dto/create-reaction.dto";
 import { PasswordlessAccount } from "../../../account";
@@ -9,6 +9,7 @@ import { ReactionRepository } from "../../infrastructure/repository/reaction.rep
 
 type CreateReactionPayload = { data: CreateReactionDTO; account: PasswordlessAccount };
 
+@Injectable()
 export class CreateReactionService implements BaseService<CreateReactionPayload, Reaction | Match> {
   constructor(
     private readonly reactionRepository: ReactionRepository,

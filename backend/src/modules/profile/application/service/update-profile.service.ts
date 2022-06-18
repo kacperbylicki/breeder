@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { BaseService } from "../../../common";
 import { ImageDTO } from "../dto/image.dto";
 import { Injectable, NotFoundException } from "@nestjs/common";
@@ -32,7 +33,10 @@ export class UpdateProfileService implements BaseService<UpdateProfilePayload, P
       ? await this.uploadImageService.execute({ data: image, filename: account.uuid })
       : null;
 
-    const profile = ProfileMapper.toDomain({ ...persistedProfile, ...data, avatar });
+    const currentDate = dayjs();
+    const age = currentDate.diff(data?.dateOfBirth, "year");
+
+    const profile = ProfileMapper.toDomain({ ...persistedProfile, ...data, age, avatar });
 
     return this.profileRepository.updateAndReturn(profile, account.uuid);
   }
