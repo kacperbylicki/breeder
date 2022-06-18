@@ -31,7 +31,7 @@ export class CreateProfileService implements BaseService<CreateProfilePayload, P
     }
 
     const avatar = image
-      ? await this.uploadImageService.execute({ data: image, filename: account.profile.name })
+      ? await this.uploadImageService.execute({ data: image, filename: account.uuid })
       : null;
 
     const currentDate = dayjs();

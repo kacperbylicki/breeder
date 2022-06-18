@@ -29,7 +29,7 @@ export class UpdateProfileService implements BaseService<UpdateProfilePayload, P
     }
 
     const avatar = image
-      ? await this.uploadImageService.execute({ data: image, filename: account.profile.name })
+      ? await this.uploadImageService.execute({ data: image, filename: account.uuid })
       : null;
 
     const profile = ProfileMapper.toDomain({ ...persistedProfile, ...data, avatar });

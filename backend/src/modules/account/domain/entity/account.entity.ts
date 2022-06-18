@@ -1,17 +1,18 @@
 import { Entity } from "../../../common/domain/entity/base.entity";
 import { Profile } from "../../../profile";
+import { ProfileMapper } from "../../../profile/application/mapper/profile.mapper";
 
 interface IAccount {
   uuid?: string;
   email: string;
   password: string;
-  profile: Profile;
+  profile: Profile | null;
 }
 
 export class Account extends Entity {
   public email!: string;
   public password: string;
-  public profile!: Profile;
+  public profile: Profile | null;
 
   private constructor(props: IAccount, uuid?: string) {
     super(uuid);
@@ -26,7 +27,7 @@ export class Account extends Entity {
       {
         email: props.email,
         password: props.password,
-        profile: props.profile ?? null,
+        profile: props.profile ? ProfileMapper.toDomain(props.profile) : null,
       },
       uuid,
     );
