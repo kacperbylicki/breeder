@@ -1,6 +1,6 @@
 import { BaseService } from "../../../common";
 import { ImageDTO } from "../dto/image.dto";
-import { NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { PasswordlessAccount } from "../../../account";
 import { Profile } from "../../domain/entity/profile.entity";
 import { ProfileMapper } from "../mapper/profile.mapper";
@@ -14,16 +14,17 @@ type UpdateProfilePayload = {
   image?: ImageDTO;
 };
 
-export class UpdateProfileService implements BaseService<UpdateProfilePayload, Profile> {
+@Injectable()
+export class UpdateProfileService implements BaseService<UpdateProfilePayload, Profile | null> {
   constructor(
     private readonly uploadImageService: UploadImageService,
     private readonly profileRepository: ProfileRepository,
   ) {}
 
-  async execute({ data, account, image }: UpdateProfilePayload): Promise<Profile> {
-    const profileExists = await this.profileRepository.exists(account?.profile?.uuid);
+  async execute({ data, account, image }: UpdateProfilePayload): Promise<Profile | null> {
+    const persistedProfile = await this.profileRepository.findOneByAccountId(account.uuid);
 
-    if (!profileExists) {
+    if (!persistedProfile) {
       throw new NotFoundException("Profile not exist");
     }
 
@@ -31,7 +32,7 @@ export class UpdateProfileService implements BaseService<UpdateProfilePayload, P
       ? await this.uploadImageService.execute({ data: image, filename: account.profile.name })
       : null;
 
-    const profile = ProfileMapper.toDomain({ ...data, avatar });
+    const profile = ProfileMapper.toDomain({ ...persistedProfile, ...data, avatar });
 
     return this.profileRepository.updateAndReturn(profile, account.uuid);
   }

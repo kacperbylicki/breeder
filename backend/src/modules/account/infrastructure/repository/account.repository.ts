@@ -35,14 +35,14 @@ export class AccountRepository extends Repository<AccountOrmEntity> implements I
   async updateAndReturn(account: Account): Promise<Account | null> {
     const persistenceAccount = AccountMapper.toPersistence(account);
 
-    await this.update({ email: persistenceAccount.email }, persistenceAccount);
+    await this.save(persistenceAccount);
 
-    const updatedAccount = await this.findOne({ email: persistenceAccount.email });
+    const updatedAccount = await this.findOne({ uuid: persistenceAccount.uuid });
 
     return updatedAccount ? AccountMapper.toDomain(updatedAccount) : null;
   }
 
-  async deleteOne(email: string): Promise<void> {
-    await this.delete({ email });
+  async deleteOne(uuid: string): Promise<void> {
+    await this.delete({ uuid });
   }
 }

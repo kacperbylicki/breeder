@@ -7,11 +7,14 @@ import { ImageOrmEntity as Image } from "./image.entity";
 
 @Entity("profile")
 export class ProfileOrmEntity extends BaseEntity {
+  @Column({ type: String })
+  accountUuid!: string;
+
   @OneToOne(() => Account, (account: Account) => account.profile, {
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
   })
-  account!: Account | Partial<Account>;
+  account!: Account;
 
   @Column({ type: String })
   name!: string;

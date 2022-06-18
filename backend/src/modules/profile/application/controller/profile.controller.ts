@@ -56,7 +56,7 @@ export class ProfileController {
     @Body() profile: UpdateProfileDTO,
     @RequestAccount() account: PasswordlessAccount,
     @UploadedFile() image?: ImageDTO,
-  ): Promise<Profile> {
+  ): Promise<Profile | null> {
     return this.updateProfileService.execute({ data: profile, account, image });
   }
 
@@ -66,6 +66,6 @@ export class ProfileController {
   @ApiUnauthorizedResponse({ description: `Invalid token` })
   @ApiBearerAuth()
   async getProfile(@RequestAccount() account: PasswordlessAccount): Promise<Profile | null> {
-    return this.getProfileService.execute(account?.profile?.uuid);
+    return this.getProfileService.execute(account.uuid);
   }
 }

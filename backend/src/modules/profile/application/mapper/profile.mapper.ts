@@ -9,7 +9,7 @@ export class ProfileMapper {
 
   static toPersistence(profile: Profile, accountUuid: string): ProfileOrmEntity {
     const persistenceProfile = new ProfileOrmEntity();
-    const persistenceImage = ImageMapper.toPersistence(profile.avatar);
+    const persistenceImage = profile.avatar ? ImageMapper.toPersistence(profile.avatar) : null;
 
     persistenceProfile.uuid = profile.uuid;
     persistenceProfile.name = profile.name;
@@ -17,7 +17,7 @@ export class ProfileMapper {
     persistenceProfile.age = profile.age;
     persistenceProfile.gender = profile.gender;
     persistenceProfile.location = profile.location;
-    persistenceProfile.account = { uuid: accountUuid };
+    persistenceProfile.accountUuid = accountUuid;
     persistenceProfile.avatar = persistenceImage;
 
     return persistenceProfile;

@@ -1,6 +1,7 @@
+import dayjs from "dayjs";
 import { AccountRepository, PasswordlessAccount } from "../../../account";
 import { BaseService } from "../../../common";
-import { ConflictException } from "@nestjs/common";
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { CreateProfileDTO } from "../dto/create-profile.dto";
 import { ImageDTO } from "../dto/image.dto";
 import { Profile } from "../../domain/entity/profile.entity";
@@ -14,6 +15,7 @@ type CreateProfilePayload = {
   image?: ImageDTO;
 };
 
+@Injectable()
 export class CreateProfileService implements BaseService<CreateProfilePayload, Profile> {
   constructor(
     private readonly uploadImageService: UploadImageService,
@@ -22,10 +24,9 @@ export class CreateProfileService implements BaseService<CreateProfilePayload, P
   ) {}
 
   async execute({ data, account, image }: CreateProfilePayload): Promise<Profile> {
-    const persistedAccount = await this.accountRepository.findOneByEmail(account.email);
-    const persistedProfile = persistedAccount?.profile;
+    const profileExists = await this.profileRepository.exists(account.uuid);
 
-    if (persistedProfile) {
+    if (profileExists) {
       throw new ConflictException("Profile already exists");
     }
 
@@ -33,8 +34,20 @@ export class CreateProfileService implements BaseService<CreateProfilePayload, P
       ? await this.uploadImageService.execute({ data: image, filename: account.profile.name })
       : null;
 
-    const profile = ProfileMapper.toDomain({ ...data, avatar });
+    const currentDate = dayjs();
+    const age = currentDate.diff(data?.dateOfBirth, "year");
 
-    return this.profileRepository.saveAndReturn(profile, account.uuid);
+    const profile = ProfileMapper.toDomain({ ...data, age, avatar });
+    const persistedProfile = await this.profileRepository.saveAndReturn(profile, account.uuid);
+
+    const persistedAccount = await this.accountRepository.findOneById(account.uuid);
+
+    if (!persistedAccount) {
+      throw new NotFoundException("Account not found");
+    }
+
+    await this.accountRepository.updateAndReturn({ ...persistedAccount, profile });
+
+    return persistedProfile;
   }
 }

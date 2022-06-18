@@ -16,16 +16,14 @@ export class ProfileRepository extends Repository<ProfileOrmEntity> implements I
     return persistedProfiles.map((persistedProfile) => ProfileMapper.toDomain(persistedProfile));
   }
 
-  async findOneById(uuid: string): Promise<Profile | null> {
-    const persistedProfile = await this.findOne({ uuid });
+  async findOneByAccountId(accountUuid: string): Promise<Profile | null> {
+    const persistedProfile = await this.findOne({ accountUuid });
 
     return persistedProfile ? ProfileMapper.toDomain(persistedProfile) : null;
   }
 
-  async exists(uuid: string): Promise<boolean> {
-    if (!uuid) return false;
-
-    const persistedProfile = await this.findOne({ uuid });
+  async exists(accountUuid: string): Promise<boolean> {
+    const persistedProfile = await this.findOne({ accountUuid });
 
     return !!persistedProfile;
   }
@@ -38,13 +36,13 @@ export class ProfileRepository extends Repository<ProfileOrmEntity> implements I
     return ProfileMapper.toDomain(persistedProfile);
   }
 
-  async updateAndReturn(profile: Profile, accountId: string): Promise<Profile> {
+  async updateAndReturn(profile: Profile, accountId: string): Promise<Profile | null> {
     const persistenceProfile = ProfileMapper.toPersistence(profile, accountId);
 
-    await this.update({ uuid: persistenceProfile.uuid }, persistenceProfile);
+    await this.save(persistenceProfile);
 
     const updatedProfile = await this.findOne({ uuid: persistenceProfile.uuid });
 
-    return ProfileMapper.toDomain(updatedProfile);
+    return updatedProfile ? ProfileMapper.toDomain(updatedProfile) : null;
   }
 }

@@ -4,13 +4,14 @@ import { Image } from "../../domain/entity/image.entity";
 import { ImageDTO } from "../dto/image.dto";
 import { ImageMapper } from "../mapper/image.mapper";
 import { ImageRepository } from "../../infrastructure/repository/image.repository";
-import { Inject } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
 import { PutObjectRequest } from "aws-sdk/clients/s3";
 import { S3 } from "aws-sdk";
 import { v4 as uuid } from "uuid";
 
 type UploadImagePayload = { data: ImageDTO; filename: string };
 
+@Injectable()
 export class UploadImageService implements BaseService<UploadImagePayload, Image> {
   constructor(
     private readonly imageRepository: ImageRepository,
