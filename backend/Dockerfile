@@ -29,8 +29,8 @@ FROM node:16-alpine AS production
 
 WORKDIR /app
 
-ARG ENVIRONMENT=PROD
-ENV NODE_ENV=production
+ARG NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
 
 COPY --chown=node:node --from=base /app .
 
