@@ -72,3 +72,6 @@ frontend/.vercel
 
 # typescript
 frontend/*.tsbuildinfo
+
+# terraform
+infrastructure/*.tfvars
