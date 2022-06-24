@@ -22,7 +22,7 @@ const Register = () => {
   const { register, handleSubmit, formState } = useForm(formOptions);
   const { errors } = formState;
 
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = (data) => register(data);
 
   return (
     <>

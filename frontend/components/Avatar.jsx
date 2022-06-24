@@ -1,8 +1,9 @@
 import Image from "next/image";
+import Link from "next/link";
 import { useAuth } from "../contexts/AuthContext";
 
 const Avatar = () => {
-  const { profile } = useAuth();
+  const { profile, logout } = useAuth();
 
   return (
     <div className="dropdown dropdown-end">
@@ -21,16 +22,20 @@ const Avatar = () => {
         className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
       >
         <li>
-          <a className="justify-between">
-            Profile
-            <span className="badge">New</span>
-          </a>
+          <Link href="/profile">
+            <a>Profile</a>
+          </Link>
         </li>
         <li>
-          <a>Settings</a>
+          <Link href="/matches">
+            <a className="justify-between">
+              Matches
+              <span className="badge">New</span>
+            </a>
+          </Link>
         </li>
         <li>
-          <a>Logout</a>
+          <a onClick={() => logout()}>Logout</a>
         </li>
       </ul>
     </div>

@@ -1,10 +1,13 @@
 import "../styles/globals.css";
+import ErrorAlert from "../components/ErrorAlert";
 import Head from "next/head";
 import Navbar from "../components/Navbar";
-import { AuthProvider, ProtectedRoute } from "../contexts/AuthContext";
+import { AuthProvider, ProtectedRoute, useAuth } from "../contexts/AuthContext";
 
 function MyApp({ Component, pageProps }) {
-  const protectedRoutes = ["/login", "/register"];
+  const protectedRoutes = ["/profile", "/setup", "/matches", "/"];
+
+  const { error } = useAuth();
 
   return (
     <>
@@ -18,6 +21,11 @@ function MyApp({ Component, pageProps }) {
           <ProtectedRoute protectedRoutes={protectedRoutes}>
             <Navbar />
             <Component {...pageProps} />
+            {error && (
+              <ErrorAlert
+                message={error.statusCode === 401 ? "Unauthenticated" : "Unknown error occurred"}
+              />
+            )}
           </ProtectedRoute>
         </AuthProvider>
       </section>

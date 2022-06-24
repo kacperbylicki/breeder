@@ -1,3 +1,4 @@
+import ErrorAlert from "../components/ErrorAlert";
 import Link from "next/link";
 import * as yup from "yup";
 import { useAuth } from "../contexts/AuthContext";
@@ -18,7 +19,7 @@ const Login = () => {
   const { register, handleSubmit, formState } = useForm(formOptions);
   const { errors } = formState;
 
-  const { login } = useAuth();
+  const { login, error: loginError } = useAuth();
 
   const onSubmit = (data) => login(data);
 
@@ -61,6 +62,13 @@ const Login = () => {
           <button className="btn btn-primary btn-wide mt-4 w-80">Login</button>
         </section>
       </form>
+      {loginError && (
+        <ErrorAlert
+          message={
+            loginError.statusCode === 401 ? "Invalid email or password" : "Unknown error occurred"
+          }
+        />
+      )}
     </>
   );
 };
