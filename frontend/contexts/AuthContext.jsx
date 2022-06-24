@@ -1,7 +1,9 @@
 import Cookies from "js-cookie";
 import Loading from "../components/Loading";
-import axios from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
+import { getCurrentUser } from "../utils/api/get-current-user";
+import { loginAccount } from "../utils/api/login";
+import { logoutAccount } from "../utils/api/logout";
 import { useRouter } from "next/router";
 
 const AuthContext = createContext({});
@@ -9,6 +11,8 @@ const AuthContext = createContext({});
 export const AuthProvider = ({ children }) => {
   const [profile, setProfile] = useState();
   const [error, setError] = useState();
+  const [accessToken, setAccessToken] = useState();
+  const [refreshToken, setRefreshToken] = useState();
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setAuthenticated] = useState(false);
 
@@ -16,111 +20,109 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     (async () => {
-      const accessToken = Cookies.get("accessToken");
-      const refreshToken = Cookies.get("refreshToken");
-      const persistedProfile = Cookies.get("profile");
+      const persistedAccessToken = Cookies.get("accessToken");
+      const persistedRefreshToken = Cookies.get("refreshToken");
 
       if (!isAuthenticated) {
         setIsLoading(false);
       }
 
-      if (persistedProfile) {
-        setProfile(JSON.parse(persistedProfile));
-        setAuthenticated(true);
-        setIsLoading(false);
+      if (persistedAccessToken && persistedRefreshToken) {
+        setAccessToken(persistedAccessToken);
+        setRefreshToken(persistedRefreshToken);
       }
 
-      if (accessToken && refreshToken && !persistedProfile) {
-        const headers = getHeaders(accessToken);
+      if (accessToken && refreshToken && !profile) {
+        const { account, error: fetchError } = await getCurrentUser(accessToken);
 
-        try {
-          const {
-            data: { data: account },
-          } = await axios.get("http://localhost:3002/accounts/me", headers);
-
-          if (account) {
-            setProfile(account?.profile);
-            setAuthenticated(true);
-            setIsLoading(false);
-          }
-        } catch (error) {
-          setError(error?.response?.data);
+        if (fetchError) {
+          setError(fetchError);
           setTimeout(() => {
             setError();
           }, 3000);
         }
+
+        setProfile(account?.profile);
+        setAuthenticated(true);
+        setIsLoading(false);
       }
     })();
-  }, [isAuthenticated, isLoading, error]);
+  }, [isAuthenticated, isLoading, error, accessToken, refreshToken]);
 
   const login = async ({ email, password }) => {
-    try {
-      const {
-        data: {
-          data: { tokens, account },
-        },
-      } = await axios.post("http://localhost:3002/accounts/login", { email, password }); // refactor to service
+    const { account, tokens, error: fetchError } = await loginAccount({ email, password });
 
-      if (!account?.profile) {
-        setAuthenticated(true);
-        setProfile();
-        setIsLoading(false);
-
-        router.push("/setup");
-      }
-
-      if (tokens && account.profile) {
-        Cookies.set("accessToken", tokens?.accessToken);
-        Cookies.set("refreshToken", tokens?.refreshToken);
-        Cookies.set("profile", JSON.stringify(account.profile));
-
-        setAuthenticated(true);
-        setProfile(account.profile);
-        setIsLoading(false);
-
-        router.push("/");
-      }
-    } catch (error) {
-      setError(error?.response?.data);
+    if (fetchError) {
+      setError(fetchError);
       setTimeout(() => {
         setError();
       }, 3000);
     }
+
+    if (!account?.profile) {
+      Cookies.set("accessToken", tokens.accessToken);
+      Cookies.set("refreshToken", tokens.refreshToken);
+
+      setAuthenticated(true);
+      setAccessToken(tokens.accessToken);
+      setRefreshToken(tokens.refreshToken);
+      setProfile();
+      setIsLoading(false);
+
+      router.push("/setup");
+    }
+
+    Cookies.set("accessToken", tokens.accessToken);
+    Cookies.set("refreshToken", tokens.refreshToken);
+    Cookies.set("profile", JSON.stringify(account.profile));
+
+    setAuthenticated(true);
+    setAccessToken(tokens.accessToken);
+    setRefreshToken(tokens.refreshToken);
+    setProfile(account.profile);
+    setIsLoading(false);
+
+    router.push("/");
   };
 
   const logout = async () => {
-    const accessToken = Cookies.get("accessToken");
+    const { error: fetchError } = await logoutAccount(accessToken);
 
-    const revokeAccesses = () => {
-      Cookies.remove("accessToken");
-      Cookies.remove("refreshToken");
-      Cookies.remove("profile");
-
-      setProfile();
-      setAuthenticated(false);
-      setIsLoading(false);
-
-      router.push("/login");
-    };
-
-    const headers = getHeaders(accessToken);
-
-    try {
-      await axios.post("http://localhost:3002/accounts/logout", {}, headers);
-      revokeAccesses();
-    } catch (error) {
-      revokeAccesses();
+    if (fetchError) {
+      setError(fetchError);
+      setTimeout(() => {
+        setError();
+      }, 3000);
     }
+
+    Cookies.remove("accessToken");
+    Cookies.remove("refreshToken");
+    Cookies.remove("profile");
+
+    setProfile();
+    setAccessToken();
+    setRefreshToken();
+    setAuthenticated(false);
+    setIsLoading(false);
+
+    router.push("/login");
   };
 
-  const getHeaders = (accessToken) => ({
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-
   return (
-    <AuthContext.Provider value={{ isAuthenticated, isLoading, profile, error, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        isAuthenticated,
+        isLoading,
+        profile,
+        accessToken,
+        refreshToken,
+        error,
+        login,
+        logout,
+        setProfile,
+        setError,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

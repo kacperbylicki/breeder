@@ -1,22 +1,45 @@
+import ErrorAlert from "../components/ErrorAlert";
 import Image from "next/image";
 import * as yup from "yup";
+import { createProfile } from "../utils/api/create-profile";
+import { getBreeds } from "../utils/api/get-breeds";
+import { useAuth } from "../contexts/AuthContext";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/router";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 const Setup = () => {
+  const { accessToken, setError, error, setProfile } = useAuth();
+  const [breedList, setBreedList] = useState();
+  const router = useRouter();
+
   const today = new Date();
-  const fileSize = 160 * 1024;
-  const supportedFormats = ["image/jpg", "image/jpeg", "image/gif", "image/png"];
+  // const fileSize = 4096 * 1024;
+  // const supportedFormats = ["image/jpg", "image/jpeg", "image/gif", "image/png", "image/webp"];
+
+  useEffect(() => {
+    (async () => {
+      if (!breedList) {
+        const { breeds, error } = await getBreeds(accessToken);
+
+        if (error) {
+          setError(error);
+          setTimeout(() => {
+            setError();
+          }, 3000);
+        }
+
+        setBreedList(breeds);
+      }
+    })();
+  }, [breedList]);
 
   const validationSchema = yup.object().shape({
-    avatar: yup
-      .mixed()
-      .test("fileSize", "Image too large", (value) => value && value.size <= fileSize)
-      .test(
-        "fileFormat",
-        "Unsupported Format",
-        (value) => value && supportedFormats.includes(value.type),
-      ),
+    // avatar: yup
+    //   .mixed()
+    //   .test("fileSize", "Image too large", (value) => value?.size <= fileSize)
+    //   .test("fileFormat", "Unsupported Format", (value) => supportedFormats.includes(value?.type)),
     name: yup
       .string()
       .min(2, "Name must be at least 2 characters")
@@ -28,7 +51,7 @@ const Setup = () => {
       .typeError("Must be valid date")
       .max(today, "Date cannot be in the future")
       .required("Date of birth is required"),
-    gender: yup.mixed().oneOf(["Female", "Male"]),
+    gender: yup.mixed().oneOf(["female", "male"]),
     location: yup
       .string()
       .min(6, "Location must be at least 6 characters")
@@ -40,8 +63,18 @@ const Setup = () => {
   const { register, handleSubmit, formState } = useForm(formOptions);
   const { errors } = formState;
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    const { profile, error: savingError } = await createProfile(data, accessToken);
+
+    if (savingError) {
+      setError(savingError);
+      setTimeout(() => {
+        setError();
+      }, 3000);
+    }
+
+    setProfile(profile);
+    router.push("/");
   };
 
   return (
@@ -62,19 +95,13 @@ const Setup = () => {
               />
             </div>
           </label>
-          {errors.avatar?.message ? (
-            <label className="label">
-              <span className="label-text-alt text-error">{errors.avatar?.message}</span>
-            </label>
-          ) : null}
-          <input id="avatar" type="file" className="hidden" />
 
           <input
             type="text"
             placeholder="Name"
             {...register("name")}
             className={`input input-bordered ${
-              errors.email ? "input-error" : "input-primary"
+              errors.name ? "input-error" : "input-primary"
             } w-full max-w-xs mt-10`}
           />
           {errors.name?.message ? (
@@ -88,15 +115,15 @@ const Setup = () => {
               errors.breed ? "select-error" : "select-primary"
             } w-full max-w-xs mt-6`}
             {...register("breed")}
-            value="placeholder"
           >
             <option disabled value="placeholder">
               Choose breed
             </option>
-            <option>Game of Thrones</option>
-            <option>Lost</option>
-            <option>Breaking Bad</option>
-            <option>Walking Dead</option>
+            {breedList?.map((breed, index) => (
+              <option key={index} value={breed}>
+                {breed}
+              </option>
+            ))}
           </select>
           {errors.breed?.message ? (
             <label className="label">
@@ -125,13 +152,12 @@ const Setup = () => {
               errors.breed ? "select-error" : "select-primary"
             } w-full max-w-xs mt-6`}
             {...register("gender")}
-            value="placeholder"
           >
             <option disabled value="placeholder">
               Choose gender
             </option>
-            <option>Female</option>
-            <option>Male</option>
+            <option value="female">Female</option>
+            <option value="male">Male</option>
           </select>
           {errors.gender?.message ? (
             <label className="label">
@@ -156,6 +182,7 @@ const Setup = () => {
           <button className="btn btn-primary btn-wide mt-6 w-80">Save</button>
         </section>
       </form>
+      {error && <ErrorAlert message={error.message} />}
     </>
   );
 };

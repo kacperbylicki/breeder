@@ -1,9 +1,16 @@
+import ErrorAlert from "../components/ErrorAlert";
 import Link from "next/link";
 import * as yup from "yup";
+import { registerAccount } from "../utils/api/register";
+import { useAuth } from "../contexts/AuthContext";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/router";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 const Register = () => {
+  const { error, setError } = useAuth();
+  const router = useRouter();
+
   const validationSchema = yup.object().shape({
     email: yup.string().required("Email is required").email("Email is invalid"),
     password: yup
@@ -22,7 +29,20 @@ const Register = () => {
   const { register, handleSubmit, formState } = useForm(formOptions);
   const { errors } = formState;
 
-  const onSubmit = (data) => register(data);
+  const onSubmit = async (data) => {
+    const { error: registrationError } = await registerAccount(data);
+
+    if (registrationError) {
+      setError(registrationError);
+      setTimeout(() => {
+        setError();
+      }, 3000);
+
+      return;
+    }
+
+    router.push("/login");
+  };
 
   return (
     <>
@@ -55,7 +75,7 @@ const Register = () => {
             </label>
           ) : null}
           <input
-            type="confirmPassword"
+            type="password"
             placeholder="Confirm password"
             {...register("confirmPassword")}
             className={`input input-bordered ${
@@ -76,6 +96,7 @@ const Register = () => {
           <button className="btn btn-primary btn-wide mt-4 w-80">Register</button>
         </section>
       </form>
+      {error && <ErrorAlert message={error.message} />}
     </>
   );
 };

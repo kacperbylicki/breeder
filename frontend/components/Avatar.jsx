@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -9,12 +8,7 @@ const Avatar = () => {
     <div className="dropdown dropdown-end">
       <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
         <div className="w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-          <Image
-            src="https://api.lorem.space/image/face?hash=33791"
-            alt={profile.name}
-            width="50"
-            height="50"
-          />
+          <img src="/assets/images/akita.webp" alt={profile.name} />
         </div>
       </label>
       <ul
