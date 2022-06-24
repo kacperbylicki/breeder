@@ -9,12 +9,6 @@ export class RegisterDTO {
   public email!: string;
 
   @IsString()
-  @MinLength(AccountConstraints.UsernameMinLength)
-  @MaxLength(AccountConstraints.UsernameMaxLength)
-  @ApiProperty({ example: `johndoe` })
-  public username!: string;
-
-  @IsString()
   @MinLength(AccountConstraints.PasswordMinLength)
   @MaxLength(AccountConstraints.PasswordMaxLength)
   @ApiProperty({ example: `kigrHXCxAJ2azFhyXPFy` })

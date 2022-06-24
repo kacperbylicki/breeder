@@ -53,7 +53,7 @@ export class CreateReactionService implements BaseService<CreateReactionPayload,
       return match;
     }
 
-    const reaction = ReactionMapper.toDomain(data);
+    const reaction = ReactionMapper.toDomain({ ...data, originAccountId: account.uuid });
 
     return this.reactionRepository.saveAndReturn(reaction);
   }
