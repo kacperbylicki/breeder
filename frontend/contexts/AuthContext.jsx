@@ -1,4 +1,5 @@
 import Cookies from "js-cookie";
+import Loading from "../components/Loading";
 import axios from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
@@ -14,71 +15,102 @@ export const AuthProvider = ({ children }) => {
   const router = useRouter();
 
   useEffect(() => {
-    const getUserProfile = async () => {
+    (async () => {
       const accessToken = Cookies.get("accessToken");
       const refreshToken = Cookies.get("refreshToken");
       const persistedProfile = Cookies.get("profile");
 
+      if (!isAuthenticated) {
+        setIsLoading(false);
+      }
+
       if (persistedProfile) {
         setProfile(JSON.parse(persistedProfile));
         setAuthenticated(true);
+        setIsLoading(false);
       }
 
       if (accessToken && refreshToken && !persistedProfile) {
         const headers = getHeaders(accessToken);
-        const {
-          data: { data: account },
-        } = await axios.get("http://localhost:3002/accounts/me", headers);
 
-        if (account) {
-          setProfile(account?.profile);
-          setAuthenticated(true);
+        try {
+          const {
+            data: { data: account },
+          } = await axios.get("http://localhost:3002/accounts/me", headers);
+
+          if (account) {
+            setProfile(account?.profile);
+            setAuthenticated(true);
+            setIsLoading(false);
+          }
+        } catch (error) {
+          setError(error?.response?.data);
+          setTimeout(() => {
+            setError();
+          }, 3000);
         }
       }
-    };
-    getUserProfile();
-  }, [isAuthenticated]);
+    })();
+  }, [isAuthenticated, isLoading, error]);
 
   const login = async ({ email, password }) => {
-    const {
-      data: {
-        data: { tokens, account },
-      },
-    } = await axios.post("http://localhost:3002/accounts/login", { email, password }); // refactor to service
+    try {
+      const {
+        data: {
+          data: { tokens, account },
+        },
+      } = await axios.post("http://localhost:3002/accounts/login", { email, password }); // refactor to service
 
-    if (!account?.profile) {
-      setAuthenticated(true);
-      setProfile(null);
+      if (!account?.profile) {
+        setAuthenticated(true);
+        setProfile();
+        setIsLoading(false);
 
-      router.push("/setup");
-    }
+        router.push("/setup");
+      }
 
-    if (tokens && account.profile) {
-      Cookies.set("accessToken", tokens?.accessToken);
-      Cookies.set("refreshToken", tokens?.refreshToken);
-      Cookies.set("profile", JSON.stringify(account.profile));
+      if (tokens && account.profile) {
+        Cookies.set("accessToken", tokens?.accessToken);
+        Cookies.set("refreshToken", tokens?.refreshToken);
+        Cookies.set("profile", JSON.stringify(account.profile));
 
-      setAuthenticated(true);
-      setProfile(account.profile);
-      setIsLoading(false);
+        setAuthenticated(true);
+        setProfile(account.profile);
+        setIsLoading(false);
 
-      router.push("/");
+        router.push("/");
+      }
+    } catch (error) {
+      setError(error?.response?.data);
+      setTimeout(() => {
+        setError();
+      }, 3000);
     }
   };
 
   const logout = async () => {
     const accessToken = Cookies.get("accessToken");
 
+    const revokeAccesses = () => {
+      Cookies.remove("accessToken");
+      Cookies.remove("refreshToken");
+      Cookies.remove("profile");
+
+      setProfile();
+      setAuthenticated(false);
+      setIsLoading(false);
+
+      router.push("/login");
+    };
+
     const headers = getHeaders(accessToken);
-    await axios.post("http://localhost:3002/accounts/logout", headers);
 
-    Cookies.remove("accessToken");
-    Cookies.remove("refreshToken");
-    Cookies.remove("profile");
-
-    setProfile(null);
-
-    router.push("/login");
+    try {
+      await axios.post("http://localhost:3002/accounts/logout", {}, headers);
+      revokeAccesses();
+    } catch (error) {
+      revokeAccesses();
+    }
   };
 
   const getHeaders = (accessToken) => ({
@@ -98,7 +130,7 @@ export const ProtectedRoute = ({ protectedRoutes, children }) => {
   const router = useRouter();
   const { isAuthenticated, isLoading, profile } = useAuth();
 
-  const isProtected = !protectedRoutes.includes(router.pathname);
+  const isProtected = protectedRoutes.includes(router.pathname);
 
   useEffect(() => {
     if (!isAuthenticated && isProtected) {
@@ -108,10 +140,14 @@ export const ProtectedRoute = ({ protectedRoutes, children }) => {
     if (isAuthenticated && !profile) {
       router.push("/setup");
     }
+
+    if (isAuthenticated && !isProtected) {
+      router.push("/");
+    }
   }, [isAuthenticated, isLoading, isProtected]);
 
-  if ((isLoading || !isAuthenticated) && isProtected) {
-    return <div>loading...</div>;
+  if (isLoading || (!isAuthenticated && isProtected)) {
+    return <Loading />;
   }
 
   return children;
