@@ -1,6 +1,6 @@
 import { AccessTokenSettings } from "../../domain/type/access-token.settings";
 import { ConfigService } from "@nestjs/config";
-import { EnvironmentEnum } from "../../domain/enum/config.enum";
+// import { EnvironmentEnum } from "../../domain/enum/config.enum";
 import { EnvironmentVariables } from "../validator/config.validator";
 import { Injectable } from "@nestjs/common";
 import { RefreshTokenSettings } from "../../domain/type/refresh-token.settings";
@@ -46,12 +46,16 @@ export class AppConfigService extends ConfigService {
     return this.get("PORT");
   }
 
-  getEnvironment() {
-    return this.get("NODE_ENV");
-  }
+  // getEnvironment() {
+  //   return this.get("NODE_ENV");
+  // }
 
   getPasswordHashRounds(): number {
     return this.get("PASSWORD_BCRYPT_ROUNDS");
+  }
+
+  getDatabaseUrl(): string {
+    return this.get("DATABASE_URL");
   }
 
   getDatabaseHost(): string {
@@ -78,19 +82,19 @@ export class AppConfigService extends ConfigService {
     return this.get("S3_IMAGES_BUCKET");
   }
 
-  isDevelopment() {
-    return this.isActualEnvironment(EnvironmentEnum.DEVELOPMENT);
-  }
+  // isDevelopment() {
+  //   return this.isActualEnvironment(EnvironmentEnum.DEVELOPMENT);
+  // }
 
-  isStaging() {
-    return this.isActualEnvironment(EnvironmentEnum.STAGING);
-  }
+  // isStaging() {
+  //   return this.isActualEnvironment(EnvironmentEnum.STAGING);
+  // }
 
-  isProduction() {
-    return this.isActualEnvironment(EnvironmentEnum.PRODUCTION);
-  }
+  // isProduction() {
+  //   return this.isActualEnvironment(EnvironmentEnum.PRODUCTION);
+  // }
 
-  private isActualEnvironment(env: keyof typeof EnvironmentEnum) {
-    return this.getEnvironment() === env;
-  }
+  // private isActualEnvironment(env: keyof typeof EnvironmentEnum) {
+  //   return this.getEnvironment() === env;
+  // }
 }

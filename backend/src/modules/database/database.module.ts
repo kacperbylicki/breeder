@@ -11,13 +11,18 @@ export class DatabaseModule {
         TypeOrmModule.forRootAsync({
           inject: [AppConfigService],
           useFactory: (configService: AppConfigService) => ({
+            url: configService.getDatabaseUrl(),
             type: "postgres",
-            host: configService.getDatabaseHost(),
-            port: configService.getDatabasePort(),
-            username: configService.getDatabaseUser(),
-            password: configService.getDatabasePassword(),
-            database: configService.getDatabase(),
+            // host: configService.getDatabaseHost(),
+            // port: configService.getDatabasePort(),
+            // username: configService.getDatabaseUser(),
+            // password: configService.getDatabasePassword(),
+            // database: configService.getDatabase(),
+            ssl: {
+              rejectUnauthorized: false,
+            },
             entities: [`${__dirname}/../**/*.entity.{js,ts}`],
+            // autoLoadEntities: true,
             synchronize: true,
           }),
         }),
