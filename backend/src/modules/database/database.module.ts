@@ -11,8 +11,8 @@ export class DatabaseModule {
         TypeOrmModule.forRootAsync({
           inject: [AppConfigService],
           useFactory: (configService: AppConfigService) => ({
-            url: configService.getDatabaseUrl(),
             type: "postgres",
+            url: configService.getDatabaseUrl(),
             // host: configService.getDatabaseHost(),
             // port: configService.getDatabasePort(),
             // username: configService.getDatabaseUser(),
