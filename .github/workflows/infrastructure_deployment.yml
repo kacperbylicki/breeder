@@ -19,7 +19,9 @@ jobs:
         uses: hashicorp/setup-terraform@v1
 
       - name: Checkout infrastructure
-        run: cd infrastructure
+        run: |
+          cd infrastructure
+          pwd
 
       # - name: Configure AWS Credentials
       #   uses: aws-actions/configure-aws-credentials@v1
