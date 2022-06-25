@@ -8,6 +8,8 @@ import { useRouter } from "next/router";
 
 const AuthContext = createContext({});
 
+// for deployment
+
 export const AuthProvider = ({ children }) => {
   const [profile, setProfile] = useState();
   const [error, setError] = useState();
