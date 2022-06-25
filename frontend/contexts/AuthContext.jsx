@@ -60,26 +60,26 @@ export const AuthProvider = ({ children }) => {
     }
 
     if (!account?.profile) {
-      Cookies.set("accessToken", tokens.accessToken);
-      Cookies.set("refreshToken", tokens.refreshToken);
+      Cookies.set("accessToken", tokens?.accessToken);
+      Cookies.set("refreshToken", tokens?.refreshToken);
 
       setAuthenticated(true);
-      setAccessToken(tokens.accessToken);
-      setRefreshToken(tokens.refreshToken);
+      setAccessToken(tokens?.accessToken);
+      setRefreshToken(tokens?.refreshToken);
       setProfile();
       setIsLoading(false);
 
       router.push("/setup");
     }
 
-    Cookies.set("accessToken", tokens.accessToken);
-    Cookies.set("refreshToken", tokens.refreshToken);
-    Cookies.set("profile", JSON.stringify(account.profile));
+    Cookies.set("accessToken", tokens?.accessToken);
+    Cookies.set("refreshToken", tokens?.refreshToken);
+    Cookies.set("profile", JSON.stringify(account?.profile));
 
     setAuthenticated(true);
-    setAccessToken(tokens.accessToken);
-    setRefreshToken(tokens.refreshToken);
-    setProfile(account.profile);
+    setAccessToken(tokens?.accessToken);
+    setRefreshToken(tokens?.refreshToken);
+    setProfile(account?.profile);
     setIsLoading(false);
 
     router.push("/");

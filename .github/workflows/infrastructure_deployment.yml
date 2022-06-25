@@ -1,0 +1,60 @@
+name: breeder-infrastructure-deployment
+on:
+  push:
+    branches: 
+      - master
+    paths:
+      - "infrastructure/**"
+      - ".github/workflows/infrastructure_deployment.yml"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v1
+
+      - name: Terraform Setup
+        uses: hashicorp/setup-terraform@v1
+
+      # - name: Configure AWS Credentials
+      #   uses: aws-actions/configure-aws-credentials@v1
+      #   with:
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TF_VAR_heroku_account_email: ${{ secrets.HEROKU_EMAIL }}
+          TF_VAR_heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          TF_VAR_heroku_backend_production_app: ${{ secrets.HEROKU_BACKEND_APP_NAME }}
+          TF_VAR_heroku_frontend_production_app: ${{ secrets.HEROKU_FRONTEND_APP_NAME }}
+          TF_ACTION_WORKING_DIR: './infrastructure'
+          # TF_CLI_ARGS: '-var-file="infrastructure/terraform.tfvars"'
+
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt -check
+        env:
+          TF_ACTION_WORKING_DIR: './infrastructure'
+        continue-on-error: true
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate 
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+        run: terraform apply -auto-approve
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TF_VAR_heroku_account_email: ${{ secrets.HEROKU_EMAIL }}
+          TF_VAR_heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          TF_VAR_heroku_backend_production_app: ${{ secrets.HEROKU_BACKEND_APP_NAME }}
+          TF_VAR_heroku_frontend_production_app: ${{ secrets.HEROKU_FRONTEND_APP_NAME }}
+          TF_ACTION_WORKING_DIR: './infrastructure'
+          # TF_CLI_ARGS: '-var-file="infrastructure/terraform.tfvars"'
