@@ -33,14 +33,14 @@ jobs:
           TF_VAR_heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           TF_VAR_heroku_backend_production_app: ${{ secrets.HEROKU_BACKEND_APP_NAME }}
           TF_VAR_heroku_frontend_production_app: ${{ secrets.HEROKU_FRONTEND_APP_NAME }}
-          TF_ACTION_WORKING_DIR: './infrastructure'
-          TF_CLI_ARGS: '-var-file="infrastructure/terraform.tfvars"'
+          TF_ACTION_WORKING_DIR: 'infrastructure/'
+          # TF_CLI_ARGS: '-var-file="infrastructure/terraform.tfvars"'
 
       - name: Terraform Format
         id: fmt
         run: terraform fmt -check
         env:
-          TF_ACTION_WORKING_DIR: './infrastructure'
+          TF_ACTION_WORKING_DIR: 'infrastructure/'
         continue-on-error: true
 
       - name: Terraform Validate
@@ -57,4 +57,4 @@ jobs:
           TF_VAR_heroku_backend_production_app: ${{ secrets.HEROKU_BACKEND_APP_NAME }}
           TF_VAR_heroku_frontend_production_app: ${{ secrets.HEROKU_FRONTEND_APP_NAME }}
           TF_ACTION_WORKING_DIR: './infrastructure'
-          TF_CLI_ARGS: '-var-file="infrastructure/terraform.tfvars"'
+          # TF_CLI_ARGS: '-var-file="infrastructure/terraform.tfvars"'
