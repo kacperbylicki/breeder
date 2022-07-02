@@ -4,5 +4,8 @@ module.exports = {
   theme: {
     extend: {},
   },
+  daisyui: {
+    themes: ["dracula", "cmyk"],
+  },
   plugins: [require("daisyui")],
 };

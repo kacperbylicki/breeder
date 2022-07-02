@@ -1,8 +1,6 @@
 import { axiosInstance } from "./axios-instance";
 
-export const createReaction = async (payload, accessToken) => {
-  axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-
+export const createReaction = async (payload) => {
   try {
     const {
       data: { data },

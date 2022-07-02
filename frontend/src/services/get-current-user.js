@@ -1,8 +1,6 @@
 import { axiosInstance } from "./axios-instance";
 
-export const getCurrentUser = async (accessToken) => {
-  axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-
+export const getCurrentUser = async () => {
   try {
     const {
       data: { data },

@@ -1,10 +1,18 @@
-<script setup>
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-</script>
-
 <template>
-  <section></section>
+  <section class="p-2">
+    <Navbar />
+    <section class="grid justify-center grid-flow-row w-auto p-2">
+      <router-view></router-view>
+    </section>
+  </section>
 </template>
 
-<style></style>
+<script>
+import Navbar from "./components/Navbar.vue";
+
+export default {
+  components: {
+    Navbar,
+  },
+};
+</script>

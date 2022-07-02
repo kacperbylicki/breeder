@@ -1,12 +1,10 @@
 import { axiosInstance } from "./axios-instance";
 
-export const updateProfile = async (payload, accessToken) => {
-  axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-
+export const createProfile = async (payload) => {
   try {
     const {
       data: { data },
-    } = await axiosInstance.put("/profiles", payload);
+    } = await axiosInstance.post("/profiles", payload);
 
     return {
       profile: data,

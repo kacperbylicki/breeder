@@ -3,11 +3,14 @@ import { axiosInstance } from "./axios-instance";
 export const loginAccount = async (payload) => {
   try {
     const {
-      data: { data },
+      data: {
+        data: { tokens, account },
+      },
     } = await axiosInstance.post("/accounts/login", payload);
 
     return {
-      ...data,
+      ...tokens,
+      ...account,
     };
   } catch (error) {
     return {
