@@ -16,6 +16,12 @@ export class ProfileRepository extends Repository<ProfileOrmEntity> implements I
     return persistedProfiles.map((persistedProfile) => ProfileMapper.toDomain(persistedProfile));
   }
 
+  async findOneById(profileId: string): Promise<Profile | null> {
+    const persistedProfile = await this.findOne({ uuid: profileId });
+
+    return persistedProfile ? ProfileMapper.toDomain(persistedProfile) : null;
+  }
+
   async findOneByAccountId(accountUuid: string): Promise<Profile | null> {
     const persistedProfile = await this.findOne({ accountUuid });
 

@@ -3,7 +3,7 @@ export * from "./domain/entity/profile.entity";
 export * from "./infrastructure/repository/profile.repository";
 export * from "./domain/repository/profile.repository";
 export * from "./application/service/create-profile.service";
-export * from "./application/service/get-profile.service";
+export * from "./application/service/get-profile-by-account-id.service";
 export * from "./application/service/update-profile.service";
 export * from "./application/service/get-breed.service";
 export * from "./application/service/upload-image.service";

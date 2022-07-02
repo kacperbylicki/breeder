@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   Put,
   UploadedFile,
@@ -14,6 +15,7 @@ import {
 import { CreateProfileDTO } from "../dto/create-profile.dto";
 import { CreateProfileService } from "../service/create-profile.service";
 import { FileInterceptor } from "@nestjs/platform-express";
+import { GetProfileByAccountIdService } from "../service/get-profile-by-account-id.service";
 import { GetProfileService } from "../service/get-profile.service";
 import { ImageDTO } from "../dto/image.dto";
 import { JwtAuthGuard, PasswordlessAccount, RequestAccount } from "../../../account";
@@ -30,6 +32,7 @@ export class ProfileController {
     private readonly createProfileService: CreateProfileService,
     private readonly updateProfileService: UpdateProfileService,
     private readonly getProfileService: GetProfileService,
+    private readonly getProfileByAccountIdService: GetProfileByAccountIdService,
   ) {}
 
   @UseGuards(JwtAuthGuard)
@@ -65,7 +68,18 @@ export class ProfileController {
   @HttpCode(HttpStatus.OK)
   @ApiUnauthorizedResponse({ description: `Invalid token` })
   @ApiBearerAuth()
-  async getProfile(@RequestAccount() account: PasswordlessAccount): Promise<Profile | null> {
-    return this.getProfileService.execute(account.uuid);
+  async getCurrentUserProfile(
+    @RequestAccount() account: PasswordlessAccount,
+  ): Promise<Profile | null> {
+    return this.getProfileByAccountIdService.execute(account.uuid);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get(":id")
+  @HttpCode(HttpStatus.OK)
+  @ApiUnauthorizedResponse({ description: `Invalid token` })
+  @ApiBearerAuth()
+  async getProfile(@Param("id") profileId: string): Promise<Profile | null> {
+    return this.getProfileService.execute(profileId);
   }
 }

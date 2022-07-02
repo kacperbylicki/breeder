@@ -3,6 +3,7 @@ import { AppConfigService } from "../../config";
 import { BreedController } from "./application/controller/breed.controller";
 import { CreateProfileService } from "./application/service/create-profile.service";
 import { GetBreedService } from "./application/service/get-breed.service";
+import { GetProfileByAccountIdService } from "./application/service/get-profile-by-account-id.service";
 import { GetProfileService } from "./application/service/get-profile.service";
 import { ImageRepository } from "./infrastructure/repository/image.repository";
 import { Module } from "@nestjs/common";
@@ -31,6 +32,7 @@ import { UploadImageService } from "./application/service/upload-image.service";
     CreateProfileService,
     GetBreedService,
     GetProfileService,
+    GetProfileByAccountIdService,
     UpdateProfileService,
     UploadImageService,
   ],
@@ -38,6 +40,7 @@ import { UploadImageService } from "./application/service/upload-image.service";
     CreateProfileService,
     GetBreedService,
     GetProfileService,
+    GetProfileByAccountIdService,
     UpdateProfileService,
     UploadImageService,
     TypeOrmModule,

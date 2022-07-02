@@ -1,10 +1,10 @@
-// import { EnvironmentEnum } from "../../domain/enum/config.enum";
-import { IsNotEmpty, IsPositive, IsString, validateSync } from "class-validator";
+import { EnvironmentEnum } from "../../domain/enum/config.enum";
+import { IsEnum, IsNotEmpty, IsPositive, IsString, validateSync } from "class-validator";
 import { plainToClass } from "class-transformer";
 
 export class EnvironmentVariables {
-  // @IsEnum(EnvironmentEnum)
-  // NODE_ENV!: string;
+  @IsEnum(EnvironmentEnum)
+  NODE_ENV!: string;
 
   @IsPositive()
   @IsNotEmpty()

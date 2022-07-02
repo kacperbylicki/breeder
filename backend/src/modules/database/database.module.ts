@@ -13,16 +13,14 @@ export class DatabaseModule {
           useFactory: (configService: AppConfigService) => ({
             type: "postgres",
             url: configService.getDatabaseUrl(),
-            // host: configService.getDatabaseHost(),
-            // port: configService.getDatabasePort(),
-            // username: configService.getDatabaseUser(),
-            // password: configService.getDatabasePassword(),
-            // database: configService.getDatabase(),
-            ssl: {
-              rejectUnauthorized: false,
-            },
+            port: configService.getDatabasePort(),
+            username: configService.getDatabaseUser(),
+            password: configService.getDatabasePassword(),
+            database: configService.getDatabase(),
+            // ssl: {
+            //   rejectUnauthorized: false,
+            // },
             entities: [`${__dirname}/../**/*.entity.{js,ts}`],
-            // autoLoadEntities: true,
             synchronize: true,
           }),
         }),
