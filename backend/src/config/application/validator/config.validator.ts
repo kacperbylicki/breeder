@@ -64,7 +64,19 @@ export class EnvironmentVariables {
 
   @IsString()
   @IsNotEmpty()
-  S3_IMAGES_BUCKET!: string;
+  BREEDER_IMAGE_BUCKET_NAME!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  AWS_ACCESS_KEY_ID!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  AWS_SECRET_ACCESS_KEY!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  AWS_REGION!: string;
 }
 
 export function validate(config: Record<string, unknown>) {
