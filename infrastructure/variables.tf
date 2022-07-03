@@ -7,15 +7,15 @@ variable "heroku_api_key" {
 }
 
 # AWS provider variables
- variable "aws_access_key_id" {
-   sensitive = true
- }
- variable "aws_secret_access_key" {
-   sensitive = true
- }
- variable "aws_region" {
-   default = "eu-central-1"
- }
+// variable "aws_access_key_id" {
+//   sensitive = true
+// }
+// variable "aws_secret_access_key" {
+//   sensitive = true
+// }
+// variable "aws_region" {
+//   default = "eu-central-1"
+// }
 
 # Apps variables
 variable "heroku_backend_production_app" {}
