@@ -15,6 +15,10 @@ export const authentication = {
         commit("setTokens", { accessToken, refreshToken });
         commit("setProfile", profile);
       }
+
+      return {
+        error,
+      };
     },
     logout: async ({ state, commit }) => {
       const { error } = await logoutAccount(state);
@@ -22,6 +26,10 @@ export const authentication = {
       if (!error) {
         commit("clearAccountData");
       }
+
+      return {
+        error,
+      };
     },
     getCurrentUser: async ({ state, commit }) => {
       const { account, error } = await getCurrentUser(state.accessToken);
@@ -29,6 +37,10 @@ export const authentication = {
       if (!error) {
         commit("setProfile", account);
       }
+
+      return {
+        error,
+      };
     },
     refreshToken: async ({ state, commit }) => {
       const { accessToken, refreshToken, error } = await refreshTokens(state.refreshToken);
@@ -36,6 +48,10 @@ export const authentication = {
       if (!error) {
         commit("setTokens", { accessToken, refreshToken });
       }
+
+      return {
+        error,
+      };
     },
   },
   mutations: {
@@ -53,6 +69,7 @@ export const authentication = {
       state.accessToken = null;
       state.profile = null;
       state.isAuthenticated = false;
+      state.matchesAmount = 0;
     },
   },
   getters: {

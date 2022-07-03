@@ -38,7 +38,6 @@ export default {
   props: {
     profile: {
       type: Object,
-      required: true,
       default: () => ({
         avatar: null,
       }),
@@ -71,7 +70,7 @@ export default {
 
         await this.$router.push("/login");
       } catch (error) {
-        this.errorMessage = error?.response?.data?.message;
+        this.errorMessage = error?.message;
 
         this.isLoading = false;
       }

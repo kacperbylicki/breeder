@@ -21,12 +21,12 @@
   </section>
 </template>
 <script>
-// error message as prop from parent component
 export default {
-  data() {
-    return {
-      errorMessage: null,
-    };
+  props: {
+    errorMessage: {
+      type: String,
+      required: true,
+    },
   },
 };
 </script>

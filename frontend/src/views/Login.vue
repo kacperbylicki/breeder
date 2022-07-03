@@ -1,4 +1,5 @@
 <template>
+  <ErrorAlert v-if="errorMessage" :error-message="errorMessage" />
   <ValidatedForm
     v-slot="{ errors }"
     :validation-schema="loginValidationSchema"
@@ -36,6 +37,7 @@
 </template>
 
 <script>
+import ErrorAlert from "../components/ErrorAlert.vue";
 import { ErrorMessage, Field, Form } from "vee-validate";
 import { loginValidationSchema } from "../validators/login.validator";
 import { mapActions } from "vuex";
@@ -45,6 +47,7 @@ export default {
     ValidatedForm: Form,
     Field,
     ErrorMessage,
+    ErrorAlert,
   },
   data() {
     return {
@@ -59,14 +62,28 @@ export default {
       this.isLoading = true;
 
       try {
-        await this.login(payload);
+        const { error } = await this.login(payload);
 
         this.isLoading = false;
-        await this.$router.push("/");
+
+        if (!error) {
+          await this.$router.push("/");
+        }
+
+        this.errorMessage = error?.message;
+
+        this.resetErrorMessage();
       } catch (error) {
         this.isLoading = false;
-        this.errorMessage = error?.response?.data?.message;
+        this.errorMessage = error?.message;
+
+        this.resetErrorMessage();
       }
+    },
+    resetErrorMessage() {
+      setTimeout(() => {
+        this.errorMessage = null;
+      }, 3000);
     },
     redirectToRegister() {
       this.$router.push("/register");

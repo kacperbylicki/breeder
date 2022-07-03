@@ -91,10 +91,10 @@ export default {
         }
 
         this.isLoading = false;
-        this.errorMessage = error?.response?.data?.message;
+        this.errorMessage = error?.message;
       } catch (error) {
         this.isLoading = false;
-        this.errorMessage = error?.response?.data?.message;
+        this.errorMessage = error?.message;
       }
     },
     async react(targetAccountId, type) {
@@ -106,10 +106,10 @@ export default {
         }
 
         this.isLoading = false;
-        this.errorMessage = error?.response?.data?.message;
+        this.errorMessage = error?.message;
       } catch (error) {
         this.isLoading = false;
-        this.errorMessage = error?.response?.data?.message;
+        this.errorMessage = error?.message;
       }
     },
   },

@@ -1,4 +1,5 @@
 <template>
+  <ErrorAlert v-if="errorMessage" :error-message="errorMessage" />
   <ValidatedForm
     v-slot="{ errors }"
     :validation-schema="registerValidationSchema"
@@ -46,12 +47,14 @@
   </ValidatedForm>
 </template>
 <script>
+import ErrorAlert from "../components/ErrorAlert.vue";
 import { ErrorMessage, Field, Form } from "vee-validate";
 import { registerAccount } from "../services";
 import { registerValidationSchema } from "../validators/register.validator";
 
 export default {
   components: {
+    ErrorAlert,
     ValidatedForm: Form,
     Field,
     ErrorMessage,
@@ -76,11 +79,20 @@ export default {
         }
 
         this.isLoading = false;
-        this.errorMessage = error?.response?.data?.message;
+        this.errorMessage = error?.message;
+
+        this.resetErrorMessage();
       } catch (error) {
         this.isLoading = false;
-        this.errorMessage = error?.response?.data?.message;
+        this.errorMessage = error?.message;
+
+        this.resetErrorMessage();
       }
+    },
+    resetErrorMessage() {
+      setTimeout(() => {
+        this.errorMessage = null;
+      }, 3000);
     },
     redirectToLogin() {
       this.$router.push("/login");

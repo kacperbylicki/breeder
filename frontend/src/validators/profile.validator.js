@@ -7,12 +7,12 @@ const supportedFormats = ["image/jpg", "image/jpeg", "image/gif", "image/png", "
 export const createProfileValidationSchema = yup.object().shape({
   avatar: yup
     .mixed()
-    .test("fileSize", "Image too large", (value) => !value || value?.size <= fileSize)
     .test(
-      "fileFormat",
+      "fileType",
       "Unsupported Format",
-      (value) => !value || supportedFormats.includes(value?.type),
-    ),
+      (value) => !value || supportedFormats.includes(value[0].type),
+    )
+    .test("fileSize", "Image too large", (value) => !value || value[0].size <= fileSize),
   name: yup
     .string()
     .min(2, "Name must be at least 2 characters")

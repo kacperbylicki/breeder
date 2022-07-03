@@ -1,5 +1,6 @@
 <template>
   <Loading v-if="isLoading" />
+  <ErrorAlert v-if="errorMessage" :error-message="errorMessage" />
   <div class="card w-auto mt-8 bg-base-100 shadow-xl mx-3">
     <section v-if="!isEditing" class="grid place-items-end p-4">
       <button class="btn btn-sm" @click="setEditingProfile(true)">Edit</button>
@@ -115,6 +116,7 @@
   </div>
 </template>
 <script>
+import ErrorAlert from "../components/ErrorAlert.vue";
 import Loading from "../components/Loading.vue";
 import { ErrorMessage, Field, Form } from "vee-validate";
 import { capitalizeFirstLetter } from "../helpers/capitalize-first-letter";
@@ -129,6 +131,7 @@ export default {
     Field,
     ErrorMessage,
     Loading,
+    ErrorAlert,
   },
   data() {
     return {
@@ -169,10 +172,14 @@ export default {
         }
 
         this.isLoading = false;
-        this.errorMessage = error?.response?.data?.message;
+        this.errorMessage = error?.message;
+
+        this.resetErrorMessage();
       } catch (error) {
         this.isLoading = false;
-        this.errorMessage = error?.response?.data?.message;
+        this.errorMessage = error?.message;
+
+        this.resetErrorMessage();
       }
     },
     async handleProfileUpdate(payload) {
@@ -188,11 +195,20 @@ export default {
         }
 
         this.isLoading = false;
-        this.errorMessage = error?.response?.data?.message;
+        this.errorMessage = error?.message;
+
+        this.resetErrorMessage();
       } catch (error) {
         this.isLoading = false;
-        this.errorMessage = error?.response?.data?.message;
+        this.errorMessage = error?.message;
+
+        this.resetErrorMessage();
       }
+    },
+    resetErrorMessage() {
+      setTimeout(() => {
+        this.errorMessage = null;
+      }, 3000);
     },
   },
 };

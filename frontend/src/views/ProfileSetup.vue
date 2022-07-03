@@ -1,5 +1,6 @@
 <template>
   <Loading v-if="isLoading" />
+  <ErrorAlert v-if="errorMessage" :error-message="errorMessage" />
   <ValidatedForm
     v-slot="{ errors }"
     :validation-schema="createProfileValidationSchema"
@@ -84,6 +85,7 @@
   </ValidatedForm>
 </template>
 <script>
+import ErrorAlert from "../components/ErrorAlert.vue";
 import Loading from "../components/Loading.vue";
 import { ErrorMessage, Field, Form } from "vee-validate";
 import { createProfile, getBreeds } from "../services";
@@ -96,6 +98,7 @@ export default {
     Field,
     ErrorMessage,
     Loading,
+    ErrorAlert,
   },
   data() {
     return {
@@ -123,17 +126,24 @@ export default {
         }
 
         this.isLoading = false;
-        this.errorMessage = error?.response?.data?.message;
+        this.errorMessage = error?.message;
+
+        this.resetErrorMessage();
       } catch (error) {
         this.isLoading = false;
-        this.errorMessage = error?.response?.data?.message;
+        this.errorMessage = error?.message;
+
+        this.resetErrorMessage();
       }
     },
     async handleProfileSetup(payload) {
       this.isLoading = true;
 
       try {
-        const { profile, error } = await createProfile(payload);
+        const { profile, error } = await createProfile({
+          ...payload,
+          avatar: payload?.avatar?.[0],
+        });
 
         if (!error) {
           this.isLoading = false;
@@ -144,11 +154,20 @@ export default {
         }
 
         this.isLoading = false;
-        this.errorMessage = error?.response?.data?.message;
+        this.errorMessage = error?.message;
+
+        this.resetErrorMessage();
       } catch (error) {
         this.isLoading = false;
-        this.errorMessage = error?.response?.data?.message;
+        this.errorMessage = error?.message;
+
+        this.resetErrorMessage();
       }
+    },
+    resetErrorMessage() {
+      setTimeout(() => {
+        this.errorMessage = null;
+      }, 3000);
     },
   },
 };

@@ -1,5 +1,6 @@
 <template>
   <Loading v-if="isLoading" />
+  <ErrorAlert v-if="errorMessage" :error-message="errorMessage" />
   <div v-else class="grid place-items-center">
     <div class="card w-96 max-w-sm mt-8 bg-base-100">
       <div class="text-left">
@@ -23,6 +24,7 @@
   </div>
 </template>
 <script>
+import ErrorAlert from "../components/ErrorAlert.vue";
 import Loading from "../components/Loading.vue";
 import MatchRow from "../components/MatchRow.vue";
 import ReactionsCarousel from "../components/ReactionsCarousel.vue";
@@ -34,6 +36,7 @@ export default {
     Loading,
     ReactionsCarousel,
     MatchRow,
+    ErrorAlert,
   },
   data() {
     return {
@@ -70,10 +73,14 @@ export default {
         }
 
         this.isLoading = false;
-        this.errorMessage = error?.response?.data?.message;
+        this.errorMessage = error?.message;
+
+        this.resetErrorMessage();
       } catch (error) {
         this.isLoading = false;
-        this.errorMessage = error?.response?.data?.message;
+        this.errorMessage = error?.message;
+
+        this.resetErrorMessage();
       }
     },
     async fetchMatches() {
@@ -86,11 +93,20 @@ export default {
         }
 
         this.isLoading = false;
-        this.errorMessage = error?.response?.data?.message;
+        this.errorMessage = error?.message;
+
+        this.resetErrorMessage();
       } catch (error) {
         this.isLoading = false;
-        this.errorMessage = error?.response?.data?.message;
+        this.errorMessage = error?.message;
+
+        this.resetErrorMessage();
       }
+    },
+    resetErrorMessage() {
+      setTimeout(() => {
+        this.errorMessage = null;
+      }, 3000);
     },
   },
 };
