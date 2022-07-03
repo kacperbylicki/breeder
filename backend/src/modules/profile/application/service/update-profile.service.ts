@@ -12,7 +12,7 @@ import { UploadImageService } from "./upload-image.service";
 type UpdateProfilePayload = {
   data: UpdateProfileDTO;
   account: PasswordlessAccount;
-  image?: ImageDTO;
+  avatar?: ImageDTO;
 };
 
 @Injectable()
@@ -22,21 +22,21 @@ export class UpdateProfileService implements BaseService<UpdateProfilePayload, P
     private readonly profileRepository: ProfileRepository,
   ) {}
 
-  async execute({ data, account, image }: UpdateProfilePayload): Promise<Profile | null> {
+  async execute({ data, account, avatar }: UpdateProfilePayload): Promise<Profile | null> {
     const persistedProfile = await this.profileRepository.findOneByAccountId(account.uuid);
 
     if (!persistedProfile) {
       throw new NotFoundException("Profile not exist");
     }
 
-    const avatar = image
-      ? await this.uploadImageService.execute({ data: image, filename: account.uuid })
+    const persistedAvatar = avatar
+      ? await this.uploadImageService.execute({ data: avatar, filename: account.uuid })
       : null;
 
     const currentDate = dayjs();
     const age = currentDate.diff(data?.dateOfBirth, "year");
 
-    const profile = ProfileMapper.toDomain({ ...persistedProfile, ...data, age, avatar });
+    const profile = ProfileMapper.toDomain({ ...persistedProfile, ...data, age, persistedAvatar });
 
     return this.profileRepository.updateAndReturn(profile, account.uuid);
   }

@@ -12,7 +12,7 @@ import { UploadImageService } from "./upload-image.service";
 type CreateProfilePayload = {
   data: CreateProfileDTO;
   account: PasswordlessAccount;
-  image?: ImageDTO;
+  avatar?: ImageDTO;
 };
 
 @Injectable()
@@ -23,21 +23,21 @@ export class CreateProfileService implements BaseService<CreateProfilePayload, P
     private readonly accountRepository: AccountRepository,
   ) {}
 
-  async execute({ data, account, image }: CreateProfilePayload): Promise<Profile> {
+  async execute({ data, account, avatar }: CreateProfilePayload): Promise<Profile> {
     const profileExists = await this.profileRepository.exists(account.uuid);
 
     if (profileExists) {
       throw new ConflictException("Profile already exists");
     }
 
-    const avatar = image
-      ? await this.uploadImageService.execute({ data: image, filename: account.uuid })
+    const uploadedAvatar = avatar
+      ? await this.uploadImageService.execute({ data: avatar, filename: account.uuid })
       : null;
 
     const currentDate = dayjs();
     const age = currentDate.diff(data?.dateOfBirth, "year");
 
-    const profile = ProfileMapper.toDomain({ ...data, age, avatar });
+    const profile = ProfileMapper.toDomain({ ...data, age, avatar: uploadedAvatar });
     const persistedProfile = await this.profileRepository.saveAndReturn(profile, account.uuid);
 
     const persistedAccount = await this.accountRepository.findOneById(account.uuid);

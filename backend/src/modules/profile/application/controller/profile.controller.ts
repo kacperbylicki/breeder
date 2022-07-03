@@ -39,28 +39,28 @@ export class ProfileController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiUnauthorizedResponse({ description: `Invalid token` })
-  @UseInterceptors(FileInterceptor("image", { limits: { files: 1 } }))
+  @UseInterceptors(FileInterceptor("avatar", { limits: { files: 1, fieldSize: 4096 * 1024 } }))
   @ApiBearerAuth()
   async createProfile(
     @Body() profile: CreateProfileDTO,
     @RequestAccount() account: PasswordlessAccount,
-    @UploadedFile() image?: ImageDTO,
+    @UploadedFile() avatar?: ImageDTO,
   ): Promise<Profile> {
-    return this.createProfileService.execute({ data: profile, account, image });
+    return this.createProfileService.execute({ data: profile, account, avatar });
   }
 
   @UseGuards(JwtAuthGuard)
   @Put()
   @HttpCode(HttpStatus.OK)
   @ApiUnauthorizedResponse({ description: `Invalid token` })
-  @UseInterceptors(FileInterceptor("image", { limits: { files: 1 } }))
+  @UseInterceptors(FileInterceptor("avatar", { limits: { files: 1, fieldSize: 4096 * 1024 } }))
   @ApiBearerAuth()
   async updateProfile(
     @Body() profile: UpdateProfileDTO,
     @RequestAccount() account: PasswordlessAccount,
-    @UploadedFile() image?: ImageDTO,
+    @UploadedFile() avatar?: ImageDTO,
   ): Promise<Profile | null> {
-    return this.updateProfileService.execute({ data: profile, account, image });
+    return this.updateProfileService.execute({ data: profile, account, avatar });
   }
 
   @UseGuards(JwtAuthGuard)
