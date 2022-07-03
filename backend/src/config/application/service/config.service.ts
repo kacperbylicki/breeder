@@ -79,7 +79,19 @@ export class AppConfigService extends ConfigService {
   }
 
   getImagesBucket(): string {
-    return this.get("S3_IMAGES_BUCKET");
+    return this.get("BREEDER_IMAGE_BUCKET_NAME");
+  }
+
+  getAccessKeyId(): string {
+    return this.get("AWS_ACCESS_KEY_ID");
+  }
+
+  getSecretAccessKey(): string {
+    return this.get("AWS_SECRET_ACCESS_KEY");
+  }
+
+  getAwsRegion(): string {
+    return this.get("AWS_REGION");
   }
 
   isDevelopment() {
