@@ -11,25 +11,25 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
       - name: Terraform Setup
         uses: hashicorp/setup-terraform@v1
 
-      - name: Checkout infrastructure
-        run: |
-          cd infrastructure
-          pwd
-
-      # - name: Configure AWS Credentials
-      #   uses: aws-actions/configure-aws-credentials@v1
-      #   with:
-      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#       - name: Configure AWS Credentials
+#         uses: aws-actions/configure-aws-credentials@v1
+#         with:
+#           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Terraform Init
+        working-directory: ./infrastructure
         id: init
         run: terraform init
         env:
@@ -38,21 +38,20 @@ jobs:
           TF_VAR_heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           TF_VAR_heroku_backend_production_app: ${{ secrets.HEROKU_BACKEND_APP_NAME }}
           TF_VAR_heroku_frontend_production_app: ${{ secrets.HEROKU_FRONTEND_APP_NAME }}
-          # TF_ACTION_WORKING_DIR: 'infrastructure/'
-          # TF_CLI_ARGS: '-var-file="infrastructure/terraform.tfvars"'
 
       - name: Terraform Format
+        working-directory: ./infrastructure
         id: fmt
         run: terraform fmt -check
-        # env:
-        #   TF_ACTION_WORKING_DIR: 'infrastructure/'
         continue-on-error: true
 
       - name: Terraform Validate
+        working-directory: ./infrastructure
         id: validate
         run: terraform validate 
 
       - name: Terraform Apply
+        working-directory: ./infrastructure
         if: github.ref == 'refs/heads/master' && github.event_name == 'push'
         run: terraform apply -auto-approve
         env:
@@ -61,5 +60,3 @@ jobs:
           TF_VAR_heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           TF_VAR_heroku_backend_production_app: ${{ secrets.HEROKU_BACKEND_APP_NAME }}
           TF_VAR_heroku_frontend_production_app: ${{ secrets.HEROKU_FRONTEND_APP_NAME }}
-          # TF_ACTION_WORKING_DIR: './infrastructure'
-          # TF_CLI_ARGS: '-var-file="infrastructure/terraform.tfvars"'

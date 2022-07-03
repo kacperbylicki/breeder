@@ -1,5 +1,5 @@
 # Production database
 resource "heroku_addon" "breeder_database_production" {
-  app  = "${heroku_app.breeder_backend_production.name}"
+  app_id = "${heroku_app.breeder_backend_production.id}"
   plan = "${var.heroku_production_database}"
 }

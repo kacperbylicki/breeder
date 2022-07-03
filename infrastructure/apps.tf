@@ -2,10 +2,6 @@ resource "heroku_app" "breeder_backend_production" {
   name   = "${var.heroku_backend_production_app}"
   region = "${var.heroku_region}"
 
-  config_vars {
-    APP_ENV = "production"
-  }
-
   # config_vars = {
   #     FILESYSTEMS_DEFAULT = "${var.filesystems_default}"
   #     FILESYSTEMS_S3_KEY = "${aws_iam_access_key.s3_rw.id}"
@@ -20,10 +16,6 @@ resource "heroku_app" "breeder_backend_production" {
 resource "heroku_app" "breeder_frontend_production" {
   name   = "${var.heroku_frontend_production_app}"
   region = "${var.heroku_region}"
-
-  config_vars {
-    APP_ENV = "production"
-  }
 
   # config_vars = {
   #     FILESYSTEMS_DEFAULT = "${var.filesystems_default}"

@@ -25,7 +25,6 @@ variable "heroku_region" {
 }
 
 variable "heroku_app_buildpacks" {
-  type = "list"
   default = ["heroku/nodejs"]
 }
 
