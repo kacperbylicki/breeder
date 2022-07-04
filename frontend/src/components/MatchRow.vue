@@ -3,7 +3,7 @@
     <div class="card card-side bg-base-100">
       <div class="avatar m-2">
         <div class="w-14 rounded-full ring ring-secondary ring-offset-base-100 ring-offset-2">
-          <img v-if="match.avatar" :src="match.avatar" alt="avatar" />
+          <img v-if="match.avatar" :src="match.avatar.url" alt="avatar" />
           <img v-else src="../assets/default-avatar.svg" alt="avatar" />
         </div>
       </div>
