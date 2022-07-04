@@ -7,15 +7,17 @@
     @submit="handleProfileSetup"
   >
     <section class="grid place-items-center mt-10">
-      <label for="avatar" class="w-24 btn btn-lg btn-ghost btn-circle avatar rounded-full">
-        <div class="rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-          <img src="../assets/default-avatar.svg" alt="avatar" />
-        </div>
-      </label>
-      <Field id="avatar" name="avatar" type="file" class="hidden" />
-      <label class="label mt-12">
-        <ErrorMessage as="span" name="avatar" class="label-text-alt text-error" />
-      </label>
+      <div class="tooltip tooltip-bottom" data-tip="Click to choose avatar">
+        <label for="avatar" class="w-24 btn btn-lg btn-ghost btn-circle avatar rounded-full">
+          <div class="rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+            <img src="../assets/default-avatar.svg" alt="avatar" />
+          </div>
+        </label>
+        <Field id="avatar" name="avatar" type="file" class="hidden" />
+        <label class="label mt-12">
+          <ErrorMessage as="span" name="avatar" class="label-text-alt text-error" />
+        </label>
+      </div>
     </section>
 
     <Field
