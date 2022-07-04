@@ -34,6 +34,8 @@ export class CreateProfileService implements BaseService<CreateProfilePayload, P
       ? await this.uploadImageService.execute({ data: avatar, filename: account.uuid })
       : null;
 
+    console.log(uploadedAvatar);
+
     const currentDate = dayjs();
     const age = currentDate.diff(data?.dateOfBirth, "year");
 
