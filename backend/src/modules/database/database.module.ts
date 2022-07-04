@@ -17,9 +17,9 @@ export class DatabaseModule {
             username: configService.getDatabaseUser(),
             password: configService.getDatabasePassword(),
             database: configService.getDatabase(),
-            // ssl: {
-            //   rejectUnauthorized: false,
-            // },
+            ssl: {
+              rejectUnauthorized: false,
+            },
             entities: [`${__dirname}/../**/*.entity.{js,ts}`],
             synchronize: true,
           }),
