@@ -2,7 +2,7 @@
   <div v-if="profile !== null" class="dropdown dropdown-end">
     <label tabIndex="0" class="btn btn-ghost btn-circle avatar">
       <div class="w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-        <img v-if="profile.avatar" :src="profile.avatar.url" alt="avatar" />
+        <img v-if="profile?.avatar" :src="profile?.avatar?.url" alt="avatar" />
         <img v-else src="../assets/default-avatar.svg" alt="avatar" />
       </div>
     </label>

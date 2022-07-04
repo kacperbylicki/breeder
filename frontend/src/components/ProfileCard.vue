@@ -3,7 +3,7 @@
     <figure>
       <img
         v-if="profile?.avatar"
-        :src="profile?.avatar.url"
+        :src="profile?.avatar?.url"
         class="w-full h-full min-h-[20rem] max-h-[20rem] object-cover"
         alt="profile-picture"
       />
