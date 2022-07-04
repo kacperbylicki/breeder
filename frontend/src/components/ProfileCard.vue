@@ -2,7 +2,14 @@
   <div class="card card-compact w-auto max-w-[26rem] mt-8 bg-base-100 shadow-xl mx-3">
     <figure>
       <img
-        :src="profile?.avatar"
+        v-if="profile?.avatar"
+        :src="profile?.avatar.url"
+        class="w-full h-full min-h-[20rem] max-h-[20rem] object-cover"
+        alt="profile-picture"
+      />
+      <img
+        v-else
+        src="../assets/default-avatar.svg"
         class="w-full h-full min-h-[20rem] max-h-[20rem] object-cover"
         alt="profile-picture"
       />

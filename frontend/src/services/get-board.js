@@ -7,21 +7,8 @@ export const getBoard = async () => {
       data: { data: profiles },
     } = await axiosInstance.get("/board");
 
-    const profileWithAvatarPromises = profiles.map(async (profile) => {
-      const {
-        data: { message: avatar },
-      } = await axios.get("https://dog.ceo/api/breeds/image/random");
-
-      return {
-        ...profile,
-        avatar,
-      };
-    });
-
-    const profilesWithAvatars = await Promise.all(profileWithAvatarPromises);
-
     return {
-      profiles: profilesWithAvatars,
+      profiles,
     };
   } catch (error) {
     return {
