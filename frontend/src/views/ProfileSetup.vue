@@ -13,11 +13,11 @@
             <img src="../assets/default-avatar.svg" alt="avatar" />
           </div>
         </label>
-        <Field id="avatar" name="avatar" type="file" class="hidden" />
-        <label class="label mt-12">
-          <ErrorMessage as="span" name="avatar" class="label-text-alt text-error" />
-        </label>
       </div>
+      <Field id="avatar" name="avatar" type="file" class="hidden" />
+      <label class="label mt-12">
+        <ErrorMessage as="span" name="avatar" class="label-text-alt text-error" />
+      </label>
     </section>
 
     <Field
