@@ -1,5 +1,5 @@
 <template>
-  <div v-if="profile !== null" class="dropdown dropdown-end">
+  <div class="dropdown dropdown-end">
     <label tabIndex="0" class="btn btn-ghost btn-circle avatar">
       <div class="w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
         <img v-if="profile?.avatar" :src="profile?.avatar?.url" alt="avatar" />
@@ -7,6 +7,7 @@
       </div>
     </label>
     <ul
+      v-if="profile !== null"
       tabIndex="{0}"
       class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
     >
@@ -23,13 +24,17 @@
         <a @click="handleLogout">Logout</a>
       </li>
     </ul>
-  </div>
 
-  <label v-else tabIndex="0" class="btn btn-ghost btn-circle avatar">
-    <div class="w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-      <img src="../assets/default-avatar.svg" alt="avatar" />
-    </div>
-  </label>
+    <ul
+      v-else
+      tabIndex="{0}"
+      class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
+    >
+      <li>
+        <a @click="handleLogout">Logout</a>
+      </li>
+    </ul>
+  </div>
 </template>
 <script>
 import { mapActions, mapGetters } from "vuex";
