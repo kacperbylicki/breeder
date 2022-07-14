@@ -3,21 +3,57 @@
   <ErrorAlert v-if="errorMessage" :error-message="errorMessage" />
   <div class="card sm:w-[26rem] w-full mt-8 bg-base-100 shadow-xl mx-3">
     <section v-if="!isEditing" class="grid grid-cols-12 place-items-end p-4">
-      <button
-        class="btn btn-sm modal-button btn-outline btn-error xxs:col-span-9 xs:col-span-10 col-span-12"
-        @click="setModalOpened(true)"
-      >
-        Delete Account
-      </button>
-      <button
-        class="btn btn-sm xxs:col-span-3 xs:col-span-2 col-span-12 mt-2 xxs:mt-0"
-        @click="setEditingProfile(true)"
-      >
-        Edit
-      </button>
+      <div class="dropdown dropdown-end col-span-12">
+        <label tabindex="0" class="btn btn-ghost">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            class="inline-block w-5 h-5 stroke-current"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"
+            ></path>
+          </svg>
+        </label>
+        <ul
+          tabindex="0"
+          class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
+        >
+          <li>
+            <a class="fill-current" @click="setEditingProfile(true)">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 512 512">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M490.3 40.4C512.2 62.27 512.2 97.73 490.3 119.6L460.3 149.7L362.3 51.72L392.4 21.66C414.3-.2135 449.7-.2135 471.6 21.66L490.3 40.4zM172.4 241.7L339.7 74.34L437.7 172.3L270.3 339.6C264.2 345.8 256.7 350.4 248.4 353.2L159.6 382.8C150.1 385.6 141.5 383.4 135 376.1C128.6 370.5 126.4 361 129.2 352.4L158.8 263.6C161.6 255.3 166.2 247.8 172.4 241.7V241.7zM192 63.1C209.7 63.1 224 78.33 224 95.1C224 113.7 209.7 127.1 192 127.1H96C78.33 127.1 64 142.3 64 159.1V416C64 433.7 78.33 448 96 448H352C369.7 448 384 433.7 384 416V319.1C384 302.3 398.3 287.1 416 287.1C433.7 287.1 448 302.3 448 319.1V416C448 469 405 512 352 512H96C42.98 512 0 469 0 416V159.1C0 106.1 42.98 63.1 96 63.1H192z"
+                />
+              </svg>
+              Edit
+            </a>
+          </li>
+          <li>
+            <a class="fill-red-500" @click="setModalOpened(true)">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 512 512">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M310.6 361.4c12.5 12.5 12.5 32.75 0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3L54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75 0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25l-105.4 105.4L310.6 361.4z"
+                />
+              </svg>
+              Delete Account
+            </a>
+          </li>
+        </ul>
+      </div>
     </section>
 
-    <section class="grid place-items-center mt-6">
+    <section class="grid place-items-center mt-2 mb-6">
       <div class="avatar">
         <div class="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
           <img v-if="profile?.avatar" :src="profile?.avatar?.url" alt="avatar" />
@@ -37,7 +73,7 @@
             name="name"
             type="text"
             placeholder="Name"
-            class="input input-bordered w-full mt-8"
+            class="input input-bordered w-full mt-2"
             :class="{ 'input-primary': !errors.name, 'input-error': errors.name }"
             :value="profile.name"
           />
