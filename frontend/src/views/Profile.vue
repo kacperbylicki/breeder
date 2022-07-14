@@ -1,9 +1,20 @@
 <template>
   <Loading v-if="isLoading" />
   <ErrorAlert v-if="errorMessage" :error-message="errorMessage" />
-  <div class="card w-auto mt-8 bg-base-100 shadow-xl mx-3">
-    <section v-if="!isEditing" class="grid place-items-end p-4">
-      <button class="btn btn-sm" @click="setEditingProfile(true)">Edit</button>
+  <div class="card sm:w-[26rem] w-full mt-8 bg-base-100 shadow-xl mx-3">
+    <section v-if="!isEditing" class="grid grid-cols-12 place-items-end p-4">
+      <button
+        class="btn btn-sm modal-button btn-outline btn-error xxs:col-span-9 xs:col-span-10 col-span-12"
+        @click="setModalOpened(true)"
+      >
+        Delete Account
+      </button>
+      <button
+        class="btn btn-sm xxs:col-span-3 xs:col-span-2 col-span-12 mt-2 xxs:mt-0"
+        @click="setEditingProfile(true)"
+      >
+        Edit
+      </button>
     </section>
 
     <section class="grid place-items-center mt-6">
@@ -26,7 +37,7 @@
             name="name"
             type="text"
             placeholder="Name"
-            class="input input-bordered w-full mt-10"
+            class="input input-bordered w-full mt-8"
             :class="{ 'input-primary': !errors.name, 'input-error': errors.name }"
             :value="profile.name"
           />
@@ -37,7 +48,7 @@
           <Field
             name="breed"
             as="select"
-            class="select w-full mt-6"
+            class="select w-full mt-2"
             :class="{ 'input-primary': !errors.breed, 'input-error': errors.breed }"
             :value="profile?.breed"
           >
@@ -53,12 +64,12 @@
           <Field
             name="gender"
             as="select"
-            class="select w-full mt-6"
-            :class="{ 'input-primary': !errors.gender, 'input-error': errors.gender }"
-            :value="profile.gender"
+            class="select w-full mt-2"
+            :class="{ 'input-primary': !errors?.gender, 'input-error': errors?.gender }"
+            :value="profile?.gender"
           >
-            <option :value="profile.gender">{{ capitalize(profile.gender) }}</option>
-            <option v-if="profile.gender === 'female'" value="male">Male</option>
+            <option :value="profile?.gender">{{ capitalize(profile?.gender) }}</option>
+            <option v-if="profile?.gender === 'female'" value="male">Male</option>
             <option v-else value="female">Female</option>
           </Field>
           <label class="label">
@@ -69,9 +80,9 @@
             name="location"
             type="text"
             placeholder="City, Country"
-            class="input input-bordered w-full mt-6"
-            :class="{ 'input-primary': !errors.location, 'input-error': errors.location }"
-            :value="profile.location"
+            class="input input-bordered w-full mt-2"
+            :class="{ 'input-primary': !errors?.location, 'input-error': errors?.location }"
+            :value="profile?.location"
           />
           <label class="label">
             <ErrorMessage as="span" name="location" class="label-text-alt text-error" />
@@ -79,43 +90,46 @@
         </section>
         <section class="flex justify-end">
           <button
-            class="btn btn-sm btn-link text-neutral mt-8 mr-2"
+            class="btn btn-sm btn-link text-neutral mt-6 mr-2"
             @click="setEditingProfile(false)"
           >
             Cancel
           </button>
-          <button class="btn btn-sm mt-8" @click="handleProfileUpdate(values)">Save</button>
+          <button class="btn btn-sm mt-6" @click="handleProfileUpdate(values)">Save</button>
         </section>
       </ValidatedForm>
 
       <section v-else>
         <div class="text-left">
           <div class="text-xl font-extrabold">
-            {{ capitalize(profile.name) }}
-            <span class="ml-2 text-primary">{{ profile.age }}</span>
+            {{ capitalize(profile?.name) }}
+            <span class="ml-2 text-primary">{{ profile?.age }}</span>
           </div>
 
           <section class="space-x-2">
             <div class="badge badge-lg mt-4 gap-2">
-              Breed <span class="font-extrabold">{{ profile.breed }}</span>
+              Breed <span class="font-extrabold">{{ profile?.breed }}</span>
             </div>
 
             <div class="badge badge-lg mt-4 gap-2">
               Gender
-              <span class="font-extrabold">{{ capitalize(profile.gender) }}</span>
+              <span class="font-extrabold">{{ capitalize(profile?.gender) }}</span>
             </div>
 
             <div class="badge badge-lg mt-4 gap-2">
-              <span class="font-extrabold">{{ location[0] }}</span>
-              {{ location[1] }}
+              <span class="font-extrabold">{{ location?.[0] }}</span>
+              {{ location?.[1] }}
             </div>
           </section>
         </div>
       </section>
     </section>
   </div>
+
+  <DeleteAccountModal v-model="isModalOpened" @modal-opened="(value) => setModalOpened(value)" />
 </template>
 <script>
+import DeleteAccountModal from "../components/DeleteAccountModal.vue";
 import ErrorAlert from "../components/ErrorAlert.vue";
 import Loading from "../components/Loading.vue";
 import { ErrorMessage, Field, Form } from "vee-validate";
@@ -132,11 +146,13 @@ export default {
     ErrorMessage,
     Loading,
     ErrorAlert,
+    DeleteAccountModal,
   },
   data() {
     return {
       isLoading: false,
       isEditing: false,
+      isModalOpened: false,
       breeds: [],
       errorMessage: null,
       updateProfileValidationSchema,
@@ -159,6 +175,9 @@ export default {
     ...mapMutations(["setProfile"]),
     setEditingProfile(state) {
       this.isEditing = state;
+    },
+    setModalOpened(state) {
+      this.isModalOpened = state;
     },
     capitalize(value) {
       return capitalizeFirstLetter(value);

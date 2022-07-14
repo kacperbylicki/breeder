@@ -12,8 +12,10 @@ export const createProfile = async (payload) => {
       profile: data,
     };
   } catch (error) {
+    const errorSummary = error?.response?.data ?? { message: error.message };
+
     return {
-      error: error?.response?.data,
+      error: errorSummary,
     };
   }
 };

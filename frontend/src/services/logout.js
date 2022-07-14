@@ -6,8 +6,10 @@ export const logoutAccount = async () => {
 
     return {};
   } catch (error) {
+    const errorSummary = error?.response?.data ?? { message: error.message };
+
     return {
-      error: error?.response?.data,
+      error: errorSummary,
     };
   }
 };

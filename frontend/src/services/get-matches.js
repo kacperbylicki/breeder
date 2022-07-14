@@ -20,8 +20,10 @@ export const getMatches = async () => {
       matches: profiles,
     };
   } catch (error) {
+    const errorSummary = error?.response?.data ?? { message: error.message };
+
     return {
-      error: error?.response?.data,
+      error: errorSummary,
     };
   }
 };

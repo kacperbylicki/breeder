@@ -12,3 +12,4 @@ export * from "./get-reactions";
 export * from "./refresh-tokens";
 export * from "./register";
 export * from "./update-profile";
+export * from "./delete-account";

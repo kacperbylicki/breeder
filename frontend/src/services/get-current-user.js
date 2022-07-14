@@ -7,11 +7,13 @@ export const getCurrentUser = async () => {
     } = await axiosInstance.get("/accounts/me");
 
     return {
-      account: data,
+      ...data,
     };
   } catch (error) {
+    const errorSummary = error?.response?.data ?? { message: error.message };
+
     return {
-      error: error?.response?.data,
+      error: errorSummary,
     };
   }
 };

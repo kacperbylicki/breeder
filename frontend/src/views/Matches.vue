@@ -19,7 +19,13 @@
         </div>
       </div>
 
-      <MatchRow v-for="(match, index) in matches" :key="index" :match="match" />
+      <MatchRow v-for="(match, index) in paginatedMatches" :key="index" :match="match" />
+
+      <div class="btn-group w-full justify-center mt-6">
+        <button class="btn" @click="previousPage">«</button>
+        <button class="btn">Page {{ pageIndex + 1 }}</button>
+        <button class="btn" @click="nextPage">»</button>
+      </div>
     </div>
   </div>
 </template>
@@ -44,6 +50,9 @@ export default {
       errorMessage: null,
       matches: [],
       reactions: [],
+      paginatedMatches: [],
+      pageIndex: 0,
+      matchesLimit: 4,
     };
   },
   computed: {
@@ -72,12 +81,10 @@ export default {
           this.reactions = reactions ?? [];
         }
 
-        this.isLoading = false;
         this.errorMessage = error?.message;
 
         this.resetErrorMessage();
       } catch (error) {
-        this.isLoading = false;
         this.errorMessage = error?.message;
 
         this.resetErrorMessage();
@@ -90,17 +97,34 @@ export default {
         if (!error) {
           this.matches = matches ?? [];
           this.setMatchesAmount(matches.length);
+          this.paginatedMatches = this.matches.slice(this.pageIndex, this.matchesLimit);
         }
 
-        this.isLoading = false;
         this.errorMessage = error?.message;
 
         this.resetErrorMessage();
       } catch (error) {
-        this.isLoading = false;
         this.errorMessage = error?.message;
 
         this.resetErrorMessage();
+      }
+    },
+    nextPage() {
+      if (this.pageIndex + 1 < this.matches.length / this.matchesLimit) {
+        this.pageIndex++;
+        this.paginatedMatches = this.matches.slice(
+          this.pageIndex * this.matchesLimit,
+          this.matchesLimit * (this.pageIndex + 1),
+        );
+      }
+    },
+    previousPage() {
+      if (this.pageIndex > 0) {
+        this.pageIndex--;
+        this.paginatedMatches = this.matches.slice(
+          this.pageIndex * this.matchesLimit,
+          this.matchesLimit * (this.pageIndex + 1),
+        );
       }
     },
     resetErrorMessage() {

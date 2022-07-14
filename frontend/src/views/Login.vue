@@ -32,7 +32,8 @@
       <a class="link link-hover ml-1" @click="redirectToRegister">Register</a>
     </p>
 
-    <button class="btn btn-primary btn-wide mt-4 w-80">Login</button>
+    <button v-if="isLoading" class="btn btn-primary btn-wide mt-4 w-80 loading"></button>
+    <button v-else class="btn btn-primary btn-wide mt-4 w-80">Login</button>
   </ValidatedForm>
 </template>
 

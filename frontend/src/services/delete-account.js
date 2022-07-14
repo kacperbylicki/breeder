@@ -1,14 +1,10 @@
 import { axiosInstance } from "./axios-instance";
 
-export const getReactions = async () => {
+export const deleteAccount = async (payload) => {
   try {
-    const {
-      data: { data },
-    } = await axiosInstance.get("/reactions");
+    await axiosInstance.delete(`/accounts/${payload.accountId}`, payload);
 
-    return {
-      reactions: data,
-    };
+    return {};
   } catch (error) {
     const errorSummary = error?.response?.data ?? { message: error.message };
 
