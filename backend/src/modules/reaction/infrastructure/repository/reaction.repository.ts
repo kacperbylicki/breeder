@@ -34,7 +34,7 @@ export class ReactionRepository
     originAccountId: string,
     targetAccountId: string,
   ): Promise<Reaction | null> {
-    const persistedReaction = await this.find({
+    const [persistedReaction] = await this.find({
       where: {
         originAccountId: targetAccountId,
         targetAccountId: originAccountId,
