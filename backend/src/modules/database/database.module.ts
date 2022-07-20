@@ -17,9 +17,11 @@ export class DatabaseModule {
             username: configService.getDatabaseUser(),
             password: configService.getDatabasePassword(),
             database: configService.getDatabase(),
-            ssl: {
-              rejectUnauthorized: false,
-            },
+            ssl: configService.isProduction()
+              ? {
+                  rejectUnauthorized: false,
+                }
+              : undefined,
             entities: [`${__dirname}/../**/*.entity.{js,ts}`],
             synchronize: true,
           }),
