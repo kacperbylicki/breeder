@@ -7,6 +7,7 @@ import { AppConfigService } from "../../../../config";
 import {
   ConflictException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
   UnprocessableEntityException,
 } from "@nestjs/common";
@@ -64,9 +65,7 @@ export class AccountService {
   }
 
   async findByEmail(email: string): Promise<Account | null> {
-    const persistedAccount = await this.accountRepository.findOneByEmail(email);
-
-    return persistedAccount ? AccountMapper.toDomain(persistedAccount) : null;
+    return await this.accountRepository.findOneByEmail(email);
   }
 
   async authenticateWithCredentials(account: PasswordlessAccount): Promise<Tokens> {
@@ -132,6 +131,17 @@ export class AccountService {
   }
 
   async logout(account: PasswordlessAccount): Promise<void> {
+    await this.refreshTokenRepository.deleteOne(account.email);
+  }
+
+  async deleteAccount(accountId: string): Promise<void> {
+    const account = await this.accountRepository.findOneById(accountId);
+
+    if (!account) {
+      throw new NotFoundException("Account not found");
+    }
+
+    await this.accountRepository.deactivateOne(account);
     await this.refreshTokenRepository.deleteOne(account.email);
   }
 }

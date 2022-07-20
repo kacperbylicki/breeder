@@ -10,6 +10,7 @@ import {
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -98,5 +99,16 @@ export class AccountController {
     @RequestRefreshToken() token: string,
   ): Promise<Tokens> {
     return this.accountService.authenticateWithRefreshToken(account, token);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @UseGuards(LocalAuthGuard)
+  @Delete()
+  @HttpCode(HttpStatus.OK)
+  @ApiUnauthorizedResponse({ description: `Invalid token` })
+  @ApiOkResponse({ description: `Account removed` })
+  @ApiBearerAuth()
+  async deleteAccount(@RequestAccount() account: PasswordlessAccount): Promise<void> {
+    return this.accountService.deleteAccount(account.uuid);
   }
 }

@@ -7,13 +7,13 @@ import { IAccountRepository } from "../../domain/repository/account.repository";
 @EntityRepository(AccountOrmEntity)
 export class AccountRepository extends Repository<AccountOrmEntity> implements IAccountRepository {
   async findOneByEmail(email: string): Promise<Account | null> {
-    const persistedAccount = await this.findOne({ email });
+    const persistedAccount = await this.findOne({ email, isDeactivated: false });
 
     return persistedAccount ? AccountMapper.toDomain(persistedAccount) : null;
   }
 
   async findOneById(uuid: string): Promise<Account | null> {
-    const persistedAccount = await this.findOne({ uuid });
+    const persistedAccount = await this.findOne({ uuid, isDeactivated: false });
 
     return persistedAccount ? AccountMapper.toDomain(persistedAccount) : null;
   }
@@ -44,5 +44,11 @@ export class AccountRepository extends Repository<AccountOrmEntity> implements I
 
   async deleteOne(uuid: string): Promise<void> {
     await this.delete({ uuid });
+  }
+
+  async deactivateOne(account: Account): Promise<void> {
+    const persistenceAccount = AccountMapper.toPersistence({ ...account, isDeactivated: true });
+
+    await this.save(persistenceAccount);
   }
 }

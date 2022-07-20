@@ -1,6 +1,6 @@
 <template>
   <Loading v-if="isLoading" />
-  <ErrorAlert v-if="errorMessage" :error-message="errorMessage" />
+  <ErrorAlert v-if="errorMessage" class="mx-auto w-80 mt-12" :error-message="errorMessage" />
   <div v-else class="grid place-items-center">
     <div class="card w-96 max-w-sm mt-8 bg-base-100">
       <div class="text-left">

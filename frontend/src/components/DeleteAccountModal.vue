@@ -35,7 +35,7 @@
 
         <ErrorAlert
           v-if="errorMessage"
-          class="mt-6 max-w-full w-full"
+          class="max-w-full w-full mt-6"
           :error-message="errorMessage"
         />
       </ValidatedForm>
@@ -73,7 +73,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["profile", "accountId"]),
+    ...mapGetters(["profile", "accountId", "email"]),
   },
   methods: {
     ...mapMutations(["clearAccountData"]),
@@ -85,6 +85,7 @@ export default {
           ...payload,
           ...this.profile,
           accountId: this.accountId,
+          email: this.email,
         });
 
         if (!error) {

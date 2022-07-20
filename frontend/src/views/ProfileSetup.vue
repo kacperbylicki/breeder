@@ -1,6 +1,6 @@
 <template>
   <Loading v-if="isLoading" />
-  <ErrorAlert v-if="errorMessage" :error-message="errorMessage" />
+  <ErrorAlert v-if="errorMessage" class="mx-auto w-80 mt-12" :error-message="errorMessage" />
   <ValidatedForm
     v-slot="{ errors }"
     :validation-schema="createProfileValidationSchema"

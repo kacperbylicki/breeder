@@ -6,6 +6,7 @@ export const authentication = {
     refreshToken: null,
     profile: null,
     accountId: null,
+    email: null,
     isAuthenticated: false,
   },
   actions: {
@@ -15,6 +16,7 @@ export const authentication = {
         refreshToken,
         profile,
         uuid: accountId,
+        email,
         error,
       } = await loginAccount(payload);
 
@@ -22,6 +24,7 @@ export const authentication = {
         commit("setTokens", { accessToken, refreshToken });
         commit("setProfile", profile);
         commit("setAccountId", accountId);
+        commit("setEmail", email);
       }
 
       return {
@@ -40,11 +43,12 @@ export const authentication = {
       };
     },
     getCurrentUser: async ({ state, commit }) => {
-      const { profile, uuid: accountId, error } = await getCurrentUser(state.accessToken);
+      const { profile, uuid: accountId, email, error } = await getCurrentUser(state.accessToken);
 
       if (!error) {
         commit("setProfile", profile);
         commit("setAccountId", accountId);
+        commit("setEmail", email);
       }
 
       return {
@@ -76,11 +80,15 @@ export const authentication = {
     setAccountId: (state, accountId) => {
       state.accountId = accountId;
     },
+    setEmail: (state, email) => {
+      state.email = email;
+    },
     clearAccountData: (state) => {
       state.refreshToken = null;
       state.accessToken = null;
       state.profile = null;
       state.accountId = null;
+      state.email = null;
       state.isAuthenticated = false;
       state.matchesAmount = 0;
     },
@@ -91,5 +99,6 @@ export const authentication = {
     refreshToken: (state) => state.refreshToken,
     profile: (state) => state.profile,
     accountId: (state) => state.accountId,
+    email: (state) => state.email,
   },
 };

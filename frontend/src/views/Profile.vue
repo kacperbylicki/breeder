@@ -1,6 +1,6 @@
 <template>
   <Loading v-if="isLoading" />
-  <ErrorAlert v-if="errorMessage" :error-message="errorMessage" />
+  <ErrorAlert v-if="errorMessage" class="mx-auto w-80 mt-12" :error-message="errorMessage" />
   <div class="card sm:w-[26rem] w-full mt-8 bg-base-100 shadow-xl mx-3">
     <section v-if="!isEditing" class="grid grid-cols-12 place-items-end p-4">
       <div class="dropdown dropdown-end col-span-12">

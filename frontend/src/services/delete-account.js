@@ -2,7 +2,7 @@ import { axiosInstance } from "./axios-instance";
 
 export const deleteAccount = async (payload) => {
   try {
-    await axiosInstance.delete(`/accounts/${payload.accountId}`, payload);
+    await axiosInstance.delete(`/accounts`, { data: payload });
 
     return {};
   } catch (error) {

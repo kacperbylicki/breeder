@@ -17,6 +17,7 @@ export class AccountMapper {
     persistenceAccount.email = account.email;
     persistenceAccount.password = account.password;
     persistenceAccount.profile = persistenceProfile;
+    persistenceAccount.isDeactivated = account.isDeactivated ?? false;
 
     return persistenceAccount;
   }

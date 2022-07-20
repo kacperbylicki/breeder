@@ -13,4 +13,7 @@ export class AccountOrmEntity extends BaseEntity {
   @OneToOne(() => Profile, (profile) => profile.account, { eager: true, cascade: true })
   @JoinColumn()
   profile?: Profile | null;
+
+  @Column({ type: Boolean, default: false })
+  isDeactivated!: boolean;
 }

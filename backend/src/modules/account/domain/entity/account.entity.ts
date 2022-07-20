@@ -1,4 +1,4 @@
-import { Entity } from "../../../common/domain/entity/base.entity";
+import { Entity } from "../../../common";
 import { Profile } from "../../../profile";
 import { ProfileMapper } from "../../../profile/application/mapper/profile.mapper";
 
@@ -7,12 +7,14 @@ interface IAccount {
   email: string;
   password: string;
   profile: Profile | null;
+  isDeactivated: boolean;
 }
 
 export class Account extends Entity {
   public email!: string;
-  public password: string;
-  public profile: Profile | null;
+  public password!: string;
+  public profile!: Profile | null;
+  public isDeactivated!: boolean;
 
   private constructor(props: IAccount, uuid?: string) {
     super(uuid);
@@ -28,6 +30,7 @@ export class Account extends Entity {
         email: props.email,
         password: props.password,
         profile: props.profile ? ProfileMapper.toDomain(props.profile) : null,
+        isDeactivated: props.isDeactivated ?? false,
       },
       uuid,
     );
